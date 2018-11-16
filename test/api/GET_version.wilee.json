@@ -19,6 +19,7 @@
     "body": ""
   },
   "expect": {
+    "parse_as": "partial_match",
     "http_code": 200,
     "max_latency_ms": 0,
     "body": {
