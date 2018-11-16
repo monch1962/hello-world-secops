@@ -9,3 +9,5 @@ API tests sit under the `/api` directory, and should be run by wilee - after the
 Performance tests sit under the `/performance` directory, and should be run by Artillery - after the app itself has been spun up. Artillery will need to be deployed to run these tests
 
 PACT tests (see https://docs.pact.io/) sit under the `/pacts` directory, and should be executed by whatever tool is used to deal with PACT tests
+
+Stub definitions go under the `/stubs` directory. More details to come...
