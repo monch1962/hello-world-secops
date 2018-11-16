@@ -7,3 +7,5 @@ Unit tests sit under the `unit/` directory, and should be run via e.g. `npm test
 API tests sit under the `/api` directory, and should be run by wilee - after the app itself has been spun up. wilee will need to have been installed from Azure Artifacts to run these tests (so wilee will need to be loaded into Azure Artifacts first...)
 
 Performance tests sit under the `/performance` directory, and should be run by Artillery - after the app itself has been spun up. Artillery will need to be deployed to run these tests
+
+PACT tests (see https://docs.pact.io/) sit under the `/pacts` directory, and should be executed by whatever tool is used to deal with PACT tests
