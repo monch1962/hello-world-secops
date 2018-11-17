@@ -2,7 +2,7 @@
 
 Test cases have been separated into unit, API and performance - this is a reasonable subset of what would normally be run in a CI pipeline
 
-Unit tests sit under the `unit/` directory, and should be run via e.g. `npm test unit`. These tests don't require the application to be spun up, but will require all dependencies to have been previously deployed via `NODE_ENV=test npm install`
+Unit tests sit under the `unit/` directory, and should be run via e.g. `npm test`. These tests don't require the application to be spun up, but will require all dependencies to have been previously deployed via e.g. `NODE_ENV=test npm install`
 
 API tests sit under the `/api` directory, and should be run by wilee - after the app itself has been spun up. wilee will need to have been installed from Azure Artifacts to run these tests (so wilee will need to be loaded into Azure Artifacts first...)
 

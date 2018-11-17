@@ -1,8 +1,8 @@
 # hello-world-devops
-Trivial app to explore workflow &amp; CI pipelining in Azure DevOps
+Trivial app to explore workflow &amp; CI pipelining in different CI frameworks
 
 ## Intention
-This is a trivial NodeJS app, with a few unit tests, a few integration tests, and a few performance tests. Intended use case is to discover how to build/test/deploy this within Azure DevOps
+This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs and a few performance tests. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks
 
 ## Starting the app
 To start the app running in a CI-ready state
