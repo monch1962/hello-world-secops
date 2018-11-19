@@ -25,3 +25,12 @@ steps:
 - script: |
     npm run uitests
   displayName: 'Run UI tests'
+
+- script: |
+    sudo add-apt-repository ppa:longsleep/golang-backports
+    sudo apt-get update
+    sudo apt-get install golang-go
+    git clone https://github.com/monch1962/wilee
+    cd wilee
+    make local
+  displayName: 'Run wilee API tests'
