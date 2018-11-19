@@ -1,6 +1,6 @@
 # hello-world-devops
 Trivial app to explore workflow &amp; CI pipelining in different CI frameworks
-
+[![Build Status](https://dev.azure.com/monch1962/monch1962/_apis/build/status/monch1962.hello-world-devops)](https://dev.azure.com/monch1962/monch1962/_build/latest?definitionId=1)
 ## Intention
 This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs and a few performance tests. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks
 
