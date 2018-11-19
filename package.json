@@ -4,7 +4,8 @@
   "description": "Trivial application designed to understand Azure DevOps workflows",
   "main": "helloworld.js",
   "scripts": {
-    "test": "mocha test/unit/*.js"
+    "unittests": "mocha test/unit/*.js",
+    "uitests": "mocha test/ui/*.js"
   },
   "author": "David Mitchell",
   "license": "ISC",
