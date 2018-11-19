@@ -29,7 +29,7 @@ steps:
 - script: |
     which go
     # Install dep
-    mkdir /home/vsts/go/bin
+    sudo mkdir /home/vsts/go/bin
     curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
     #sudo add-apt-repository ppa:longsleep/golang-backports
     #sudo apt-get update
