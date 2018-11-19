@@ -7,3 +7,18 @@ This is a trivial NodeJS app, with a few unit tests, a few integration tests, a 
 ## Starting the app
 To start the app running in a CI-ready state
 `$ NODE_ENV=test npm install && node helloworld.js`
+
+## Running unit tests
+Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then run `npm run test`
+
+## Running UI tests
+
+Details to follow
+
+## Running API tests
+
+Details to follow
+
+## Running performance tests
+
+Details to follow
