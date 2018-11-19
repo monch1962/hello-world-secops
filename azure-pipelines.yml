@@ -19,5 +19,9 @@ steps:
   displayName: 'npm install and build'
   
 - script: |
-    npm run test
-  displayName: 'npm unit tests'
+    npm run unittests
+  displayName: 'Run unit tests'
+
+- script: |
+    npm run uitests
+  displayName: 'Run UI tests'
