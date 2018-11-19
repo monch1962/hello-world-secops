@@ -28,12 +28,12 @@ steps:
 
 - script: |
     which go
-    sudo add-apt-repository ppa:longsleep/golang-backports
-    sudo apt-get update
-    sudo apt-get -y install golang-go
-    export GOPATH=$(pwd)
+    #sudo add-apt-repository ppa:longsleep/golang-backports
+    #sudo apt-get update
+    #sudo apt-get -y install golang-go
+    #export GOPATH=$(pwd)
     git clone https://github.com/monch1962/wilee
     cd wilee
-    dep ensure
+    #dep ensure
     make local
   displayName: 'Run wilee API tests'
