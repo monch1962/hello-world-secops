@@ -27,6 +27,7 @@ steps:
   displayName: 'Run UI tests'
 
 - script: |
+    # Commented out - need to get working...
     which go
     # Install dep
     sudo mkdir /home/vsts/go/bin
@@ -35,10 +36,10 @@ steps:
     #sudo apt-get update
     #sudo apt-get -y install golang-go
     #export GOPATH=$(pwd)
-    git clone https://github.com/monch1962/wilee
-    cd wilee
-    dep ensure
-    make local
+    #git clone https://github.com/monch1962/wilee
+    #cd wilee
+    #dep ensure
+    #make local
   displayName: 'Run wilee API tests'
 
 - script: |
