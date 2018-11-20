@@ -3,6 +3,9 @@ config:
   phases:
     - duration: 60
       arrivalRate: 20
+  ensure:
+    p95: 10
+    maxErrorRate: 1
 scenarios:
   - flow:
     - get:
