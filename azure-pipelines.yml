@@ -40,3 +40,9 @@ steps:
     dep ensure
     make local
   displayName: 'Run wilee API tests'
+
+- script: |
+    npm install -g artillery
+    artillery -V
+    artillery run test/performance/performance.yml
+  displayName: 'Run Artillery performance test'
