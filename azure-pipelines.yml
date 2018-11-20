@@ -23,7 +23,10 @@ steps:
   displayName: 'Run unit tests'
 
 - script: |
+    node helloworld.js &
+    app_pid=$!
     npm run uitests
+    kill $app_pid
   displayName: 'Run UI tests'
 
 #- script: |
