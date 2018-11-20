@@ -10,11 +10,13 @@ To start the app running in a CI-ready state
 `$ NODE_ENV=test npm install && node helloworld.js`
 
 ## Running unit tests
-Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then run `npm run test`
+Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then 
+`$ npm run unittests`
 
 ## Running UI tests
 
-Details to follow
+Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then 
+`$ npm run uitests`
 
 ## Running API tests
 
@@ -22,4 +24,6 @@ Details to follow
 
 ## Running performance tests
 
-Details to follow
+Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`, then
+`$ npm install -g artillery`
+`$ artillery run test/performance/performance.yml`
