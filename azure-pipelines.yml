@@ -29,7 +29,7 @@ steps:
     kill $app_pid
   displayName: 'Run UI tests'
 
-#- script: |
+- script: |
     # Commented out - need to get working...
     #which go
     # Install dep
@@ -43,13 +43,22 @@ steps:
     #cd wilee
     #dep ensure
     #make local
-  #displayName: 'Run wilee API tests'
+    wget https://www.dropbox.com/s/sthv0p77c5gip2g/wilee?dl=0 -O wilee
+    chmod +x wilee
+    node helloworld.js &
+    APP_PID=$!
+    APP=http://localhost:8080 TESTCASES=test/api/*.wilee.json wilee
+    TESTRESULTS=$(cat test/api/*.result.json)
+    echo $TESTRESULTS
+    echo $TESTRESULTS | jq '.test_info.id, .pass_fail, .pass_fail_reason'
+    kill $APP_PID
+  displayName: 'Run wilee API tests'
 
 - script: |
     node helloworld.js &
-    app_pid=$!
+    APP_PID=$!
     npm install -g artillery
     artillery -V
     artillery run test/performance/performance.yml
-    kill $app_pid
+    kill $APP_PID
   displayName: 'Run Artillery performance test'
