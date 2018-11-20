@@ -25,3 +25,28 @@ steps:
 - script: |
     npm run uitests
   displayName: 'Run UI tests'
+
+#- script: |
+    # Commented out - need to get working...
+    #which go
+    # Install dep
+    #sudo mkdir /home/vsts/go/bin
+    #curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+    #sudo add-apt-repository ppa:longsleep/golang-backports
+    #sudo apt-get update
+    #sudo apt-get -y install golang-go
+    #export GOPATH=$(pwd)
+    #git clone https://github.com/monch1962/wilee
+    #cd wilee
+    #dep ensure
+    #make local
+  #displayName: 'Run wilee API tests'
+
+- script: |
+    node helloworld.js &
+    app_pid=$!
+    npm install -g artillery
+    artillery -V
+    artillery run test/performance/performance.yml
+    kill $app_pid
+  displayName: 'Run Artillery performance test'
