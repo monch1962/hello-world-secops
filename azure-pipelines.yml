@@ -24,9 +24,9 @@ steps:
 
 - script: |
     node helloworld.js &
-    app_pid=$!
+    APP_PID=$!
     npm run uitests
-    kill $app_pid
+    kill $APP_PID
   displayName: 'Run UI tests'
 
 - script: |
