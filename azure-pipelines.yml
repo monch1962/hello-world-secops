@@ -47,4 +47,5 @@ steps:
     npm install -g artillery
     artillery -V
     artillery run test/performance/performance.yml
+    pkill node
   displayName: 'Run Artillery performance test'
