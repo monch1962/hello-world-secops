@@ -44,8 +44,9 @@ steps:
 
 - script: |
     node helloworld.js &
+    app_pid=$!
     npm install -g artillery
     artillery -V
     artillery run test/performance/performance.yml
-    pkill node
+    kill $app_pid
   displayName: 'Run Artillery performance test'
