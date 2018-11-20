@@ -30,19 +30,6 @@ steps:
   displayName: 'Run UI tests'
 
 - script: |
-    # Commented out - need to get working...
-    #which go
-    # Install dep
-    #sudo mkdir /home/vsts/go/bin
-    #curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-    #sudo add-apt-repository ppa:longsleep/golang-backports
-    #sudo apt-get update
-    #sudo apt-get -y install golang-go
-    #export GOPATH=$(pwd)
-    #git clone https://github.com/monch1962/wilee
-    #cd wilee
-    #dep ensure
-    #make local
     node helloworld.js &
     APP_PID=$!
     wget https://www.dropbox.com/s/sthv0p77c5gip2g/wilee?dl=0 -O wilee
