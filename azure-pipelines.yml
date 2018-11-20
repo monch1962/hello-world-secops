@@ -43,6 +43,7 @@ steps:
   #displayName: 'Run wilee API tests'
 
 - script: |
+    node helloworld.js &
     npm install -g artillery
     artillery -V
     artillery run test/performance/performance.yml
