@@ -26,12 +26,12 @@ steps:
     npm run uitests
   displayName: 'Run UI tests'
 
-- script: |
+#- script: |
     # Commented out - need to get working...
-    which go
+    #which go
     # Install dep
-    sudo mkdir /home/vsts/go/bin
-    curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+    #sudo mkdir /home/vsts/go/bin
+    #curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
     #sudo add-apt-repository ppa:longsleep/golang-backports
     #sudo apt-get update
     #sudo apt-get -y install golang-go
@@ -40,7 +40,7 @@ steps:
     #cd wilee
     #dep ensure
     #make local
-  displayName: 'Run wilee API tests'
+  #displayName: 'Run wilee API tests'
 
 - script: |
     npm install -g artillery
