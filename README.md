@@ -25,11 +25,23 @@ Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`
 
 ### Running API tests
 
-Details to follow
+Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then
+
+`$ node helloworld.js &`
+
+to start the application.
+
+Get a copy of wilee (https://github.com/monch1962/wilee) and build it locally using `$ make local`
+
+Execute tests using
+
+`$ APP=http://localhost:8080 TESTCASES=test/api/*.wilee.json ./wilee`
+
+and analyse results
 
 ### Running performance tests
 
-Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`, then
+Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then
 
 `$ node helloworld.js &`
 
