@@ -29,27 +29,26 @@ steps:
     kill $app_pid
   displayName: 'Run UI tests'
 
-#- script: |
-    # Commented out - need to get working...
-    #which go
-    # Install dep
-    #sudo mkdir /home/vsts/go/bin
-    #curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-    #sudo add-apt-repository ppa:longsleep/golang-backports
-    #sudo apt-get update
-    #sudo apt-get -y install golang-go
-    #export GOPATH=$(pwd)
-    #git clone https://github.com/monch1962/wilee
-    #cd wilee
-    #dep ensure
-    #make local
-  #displayName: 'Run wilee API tests'
+- script: |
+    node helloworld.js &
+    APP_PID=$!
+    wget https://www.dropbox.com/s/sthv0p77c5gip2g/wilee?dl=0 -O wilee
+    chmod +x wilee
+    ls -l wilee
+    APP=http://localhost:8080 TESTCASES=test/api/*.wilee.json ./wilee
+    kill $APP_PID
+    TESTRESULTS=$(cat test/api/*.result.json)
+    echo $TESTRESULTS | jq '.'
+    echo $TESTRESULTS | jq 'del(.request, .expect, .actual)'
+    FAILED_TESTS=$(echo $TESTRESULTS | jq '.pass_fail' | grep fail | wc -l)
+    if [ $FAILED_TESTS -gt 0 ]; then echo $FAILED_TESTS "API tests failed" && exit 1; fi
+  displayName: 'Run wilee API tests'
 
 - script: |
     node helloworld.js &
-    app_pid=$!
+    APP_PID=$!
     npm install -g artillery
     artillery -V
     artillery run test/performance/performance.yml
-    kill $app_pid
+    kill $APP_PID
   displayName: 'Run Artillery performance test'
