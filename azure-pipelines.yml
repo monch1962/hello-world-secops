@@ -43,11 +43,11 @@ steps:
     #cd wilee
     #dep ensure
     #make local
+    node helloworld.js &
+    APP_PID=$!
     wget https://www.dropbox.com/s/sthv0p77c5gip2g/wilee?dl=0 -O wilee
     chmod +x wilee
     ls -l wilee
-    node helloworld.js &
-    APP_PID=$!
     APP=http://localhost:8080 TESTCASES=test/api/*.wilee.json ./wilee
     TESTRESULTS=$(cat test/api/*.result.json)
     echo $TESTRESULTS
