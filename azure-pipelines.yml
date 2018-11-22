@@ -57,6 +57,7 @@ steps:
     chmod +x wilee
     ls -l wilee
     APP=http://localhost:8080 TESTCASES=test/api/*.wilee.json ./wilee
+    if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
     kill $APP_PID
     TESTRESULTS=$(cat test/api/*.result.json)
     echo $TESTRESULTS | jq '.'
