@@ -19,6 +19,18 @@ steps:
   displayName: 'npm install and build'
   
 - script: |
+    SONARCLOUDDIR=/tmp
+    wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip -O $SONARCLOUDDIR/sonar.zip
+    unzip $SONARCLOUDDIR/sonar.zip
+    ls -al $SONARCLOUDDIR
+    echo sonar.host.url=http://localhost:8080 > $SONARCLOUDDIR/conf/sonar-scanner.properties
+    cat $SONARCLOUDDIR/conf/sonar-scanner.properties
+    PATH=$SONARCLOUDDIR/bin:$PATH
+    echo $PATH
+    sonar-scanner -h
+  displayName: 'Run sonarcloud code quality tests'
+    
+- script: |
     npm run unittests
   displayName: 'Run unit tests'
 
