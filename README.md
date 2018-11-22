@@ -2,6 +2,20 @@
 Trivial app to explore workflow &amp; CI pipelining in different CI frameworks
 
 [![Build Status](https://dev.azure.com/monch1962/monch1962/_apis/build/status/monch1962.hello-world-devops)](https://dev.azure.com/monch1962/monch1962/_build/latest?definitionId=1)
+
+![Build Status](https://sonarcloud.io/api/project_badges/quality_gate?project=monch1962_hello-world-devops)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=coverage)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=bugs)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=code_smells)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=duplicated_lines_density)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=ncloc)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=sqale_rating)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=alert_status)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=reliability_rating)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=security_rating)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=sqale_index)
+![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=vulnerabilities)
+
 ## Intention
 This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs and a few performance tests. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks
 
