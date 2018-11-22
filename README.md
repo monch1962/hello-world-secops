@@ -17,7 +17,7 @@ Trivial app to explore workflow &amp; CI pipelining in different CI frameworks
 ![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=vulnerabilities)
 
 ## Intention
-This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs and a few performance tests. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks
+This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs and a few performance tests. It's also linked to https://sonarcloud.io for code quality checks. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks
 
 ## Manual app startup & test execution
 
@@ -62,6 +62,11 @@ Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`
 `$ npm install -g artillery`
 
 `$ artillery run test/performance/performance.yml`
+
+
+### Running sonarcloud tests
+
+It's complicated... Refer to https://sonarcloud.io/ for detailed instructions on how to set it up (this complexity is the reason why CI is so nice to have, so I can get it to do the hack work for me!)
 
 ## Automated CI pipeline execution
 The app is hooked into its own Azure DevOps pipeline, and will run through all build/test steps automatically whenever a pull request is made to this repo. Note the build status 'badge' earlier in this README file - it indicates whether the build/test steps passed last time the pipeline was executed.
