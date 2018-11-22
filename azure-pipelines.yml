@@ -21,13 +21,22 @@ steps:
 - script: |
     SONARCLOUDDIR=/tmp
     wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip -O $SONARCLOUDDIR/sonar.zip
-    unzip $SONARCLOUDDIR/sonar.zip
+    unzip $SONARCLOUDDIR/sonar.zip -d /tmp
     ls -al $SONARCLOUDDIR
-    echo sonar.host.url=http://localhost:8080 > $SONARCLOUDDIR/conf/sonar-scanner.properties
-    cat $SONARCLOUDDIR/conf/sonar-scanner.properties
-    PATH=$SONARCLOUDDIR/bin:$PATH
+    cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
+    #echo sonar.host.url=http://localhost:8080 > $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
+    #cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
+    PATH=$SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/bin:$PATH
     echo $PATH
     sonar-scanner -h
+    #cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/sonar-project.properties
+    #sonar-scanner
+    sonar-scanner \
+    -Dsonar.projectKey=monch1962_hello-world-devops \
+    -Dsonar.organization=monch1962-github \
+    -Dsonar.sources=. \
+    -Dsonar.host.url=https://sonarcloud.io \
+    -Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
   displayName: 'Run sonarcloud code quality tests'
     
 - script: |
