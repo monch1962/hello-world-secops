@@ -29,6 +29,8 @@ steps:
     PATH=$SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/bin:$PATH
     echo $PATH
     sonar-scanner -h
+    cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/sonar-project.properties
+    sonar-scanner
   displayName: 'Run sonarcloud code quality tests'
     
 - script: |
