@@ -44,9 +44,11 @@ steps:
   displayName: 'Run unit tests'
 
 - script: |
+    #npm install -g testcafe
     node helloworld.js &
     APP_PID=$!
-    npm run uitests
+    #npm run uitests
+    testcafe headless test/ui/helloworld.ts
     kill $APP_PID
   displayName: 'Run UI tests'
 
