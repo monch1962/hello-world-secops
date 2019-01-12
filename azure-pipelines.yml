@@ -83,6 +83,8 @@ steps:
     ./hoverctl import test/integration/trumpwall.com.stub
     # Run the stubbed integration tests
     npm run integrationtests
+    if [ $? -ne 0 ]; then kill $APP_PID && HTTP_PROXY=$OLD_HTTP_PROXY && HTTPS_PROXY=$OLD_HTTPS_PROXY && ./hoverctl stop && exit 1; fi
+
     # Now we've run the stubbed integration tests, repoint HTTP_PROXY and HTTPS_PROXY to their previous values
     HTTP_PROXY=$OLD_HTTP_PROXY
     HTTPS_PROXY=$OLD_HTTPS_PROXY
