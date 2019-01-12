@@ -26,24 +26,19 @@ To start the app running in a CI-ready state
 
 `$ NODE_ENV=test npm install && node helloworld.js`
 
-### Running unit tests
-Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then 
+#### Running unit tests
 
 `$ npm run unittests`
 
-### Running UI tests
-
-Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then 
+#### Running UI tests
 
 `$ npm run uitests`
 
-### Running API tests
+#### Running integration tests
 
-Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then
+`$ npm run integrationtests`
 
-`$ node helloworld.js &`
-
-to start the application.
+#### Running API tests
 
 Get a copy of wilee (https://github.com/monch1962/wilee) and build it locally using `$ make local`
 
@@ -53,18 +48,14 @@ Execute tests using
 
 and analyse results
 
-### Running performance tests
-
-Ensure all the app dependencies have been installed (`NODE_ENV=test npm install`), then
-
-`$ node helloworld.js &`
+#### Running performance tests
 
 `$ npm install -g artillery`
 
 `$ artillery run test/performance/performance.yml`
 
 
-### Running sonarcloud tests
+#### Running sonarcloud tests
 
 It's complicated... Refer to https://sonarcloud.io/ for detailed instructions on how to set it up (this complexity is the reason why CI is so nice to have, so I can get it to do the hack work for me!)
 
