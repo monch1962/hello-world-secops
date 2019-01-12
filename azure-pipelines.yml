@@ -24,13 +24,13 @@ steps:
     cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
     PATH=$SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/bin:$PATH
     echo $PATH
-    pwd
+    APP_DIR=$(pwd)
     ls -al
     sonar-scanner -h
     sonar-scanner \
     -Dsonar.projectKey=monch1962_hello-world-devops \
     -Dsonar.organization=monch1962-github \
-    -Dsonar.sources=./helloworld.js,./components/*.js,./html/*.js \
+    -Dsonar.sources=$APP_DIR/helloworld.js,$APP_DIR/components/*.js,$APP_DIR/html/*.js \
     -Dsonar.host.url=https://sonarcloud.io \
     -Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
   displayName: 'Run sonarcloud code quality tests'
