@@ -24,7 +24,7 @@ describe('trumpwall-integration', () => {
     // done()
   })
 
-  it('it should return "nothing to see here"2', async () => {
+  it('it should return "nothing to see here"2', () => {
     request('http://localhost:8080').get('/trumpwall')
       .expect(function (res) {
         res.to.have.status(200)
