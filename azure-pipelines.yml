@@ -17,6 +17,9 @@ steps:
   displayName: 'npm install and build'
   
 - script: |
+    # First gather lines-of-coverage data from the test cases
+    node_modules/nyc/bin/nyc.js --reporter=lcov --reporter=text-lcov npm test
+
     SONARCLOUDDIR=/tmp
     wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip -O $SONARCLOUDDIR/sonar.zip
     unzip $SONARCLOUDDIR/sonar.zip -d /tmp
@@ -33,6 +36,7 @@ steps:
     -Dsonar.sources=. \
     -Dsonar.exclusions=node_modules/**,test/** \
     -Dsonar.host.url=https://sonarcloud.io \
+    -Dsonar.javascript.lcov.reportPaths=app/coverage/lcov.info \
     -Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
   displayName: 'Run sonarcloud code quality tests'
     
