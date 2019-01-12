@@ -14,8 +14,6 @@ steps:
 
 - script: |
     npm install
-    #npm run build
-    #npm run test
   displayName: 'npm install and build'
   
 - script: |
@@ -24,17 +22,16 @@ steps:
     unzip $SONARCLOUDDIR/sonar.zip -d /tmp
     ls -al $SONARCLOUDDIR
     cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
-    #echo sonar.host.url=http://localhost:8080 > $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
-    #cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
     PATH=$SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/bin:$PATH
     echo $PATH
+    APP_DIR=$(pwd)
+    ls -al
     sonar-scanner -h
-    #cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/sonar-project.properties
-    #sonar-scanner
     sonar-scanner \
     -Dsonar.projectKey=monch1962_hello-world-devops \
     -Dsonar.organization=monch1962-github \
     -Dsonar.sources=. \
+    -Dsonar.exclusions=node_modules/** \
     -Dsonar.host.url=https://sonarcloud.io \
     -Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
   displayName: 'Run sonarcloud code quality tests'
@@ -44,35 +41,90 @@ steps:
   displayName: 'Run unit tests'
 
 - script: |
+    # Install the testcafe framework; we're going to use it for UI testing
     npm install -g testcafe
+    # Start the app running, and save the PID
     node helloworld.js &
     APP_PID=$!
     #npm run uitests
     testcafe "chrome:headless" test/ui/helloworld.ts
+    # Kill the app
     kill $APP_PID
   displayName: 'Run UI tests'
 
 - script: |
+    # Start the app running and save the PID
     node helloworld.js &
     APP_PID=$!
+
+    # Grab a copy of wilee (you'd probably want to get it from somewhere like Artefactory or Nexus...)
     wget https://www.dropbox.com/s/sthv0p77c5gip2g/wilee?dl=0 -O wilee
     chmod +x wilee
     ls -l wilee
+
+    # Run all API tests in test/api/*.wilee.json
     APP=http://localhost:8080 TESTCASES=test/api/*.wilee.json ./wilee
+
+    # If wilee fails with errors, kill the app instance and exit 1 so Devops can see the failure
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
+
+    # Don't need the app any more; kill it
     kill $APP_PID
+
+    # Let's display the summary of the integration test results
     TESTRESULTS=$(cat test/api/*.result.json)
     echo $TESTRESULTS | jq '.'
     echo $TESTRESULTS | jq 'del(.request, .expect, .actual)'
+
+    # If there's any failed test cases, then exit 1 so Devops can see the failure
     FAILED_TESTS=$(echo $TESTRESULTS | jq '.pass_fail' | grep fail | wc -l)
     if [ $FAILED_TESTS -gt 0 ]; then echo $FAILED_TESTS "API tests failed" && exit 1; fi
   displayName: 'Run wilee API tests'
 
 - script: |
+    # We need to repoint HTTP_PROXY and HTTPS_PROXY to point to our stub engine (hoverfly). First save the current
+    # values of these variables
+    OLD_HTTP_PROXY=$HTTP_PROXY
+    OLD_HTTPS_PROXY=$HTTPS_PROXY
+    # Now repoint them to hoverfly, which will be running as a proxy
+    HTTP_PROXY=http://localhost:8500
+    HTTPS_PROXY=https://localhost:8500
+    # Now start the app running, and capture the PID so we can kill it later
     node helloworld.js &
     APP_PID=$!
+    # Get the hoverfly stub engine
+    wget https://github.com/SpectoLabs/hoverfly/releases/download/v0.17.7/hoverfly_bundle_linux_amd64.zip -O hoverfly.zip
+    unzip hoverfly.zip
+    # Start hoverfly running, and read in the stub config. In this case we're going to stub out 
+    # the (fictional) trumpwall.com site
+    ./hoverctl start
+    ./hoverctl import test/integration/trumpwall.com.stub.json
+    # Run the stubbed integration tests
+    npm run integrationtests
+    if [ $? -ne 0 ]; then kill $APP_PID && HTTP_PROXY=$OLD_HTTP_PROXY && HTTPS_PROXY=$OLD_HTTPS_PROXY && ./hoverctl stop && exit 1; fi
+
+    # Now we've run the stubbed integration tests, repoint HTTP_PROXY and HTTPS_PROXY to their previous values
+    HTTP_PROXY=$OLD_HTTP_PROXY
+    HTTPS_PROXY=$OLD_HTTPS_PROXY
+    # Stop Hoverfly
+    ./hoverctl stop
+
+    # Kill the app
+    kill $APP_PID
+  displayName: 'Run integration tests (stubbed)'
+
+- script: |
+    # Start the app running, and capture the PID so we can kill it later
+    node helloworld.js &
+    APP_PID=$!
+
+    # Install the artillery load testing tool
     npm install -g artillery
     artillery -V
+
+    # Run the artillery load test
     artillery run test/performance/performance.yml
+
+    # Kill the app
     kill $APP_PID
   displayName: 'Run Artillery performance test'

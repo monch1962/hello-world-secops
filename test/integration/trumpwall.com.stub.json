@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "timeExported": "2019-01-12T15:49:28+1100",
+    "schemaVersion": "v5",
+    "hoverflyVersion": "v0.17.7"
+  },
+  "data": {
+    "pairs": [
+      {
+        "request": {
+          "path": [
+            {
+              "matcher": "exact",
+              "value": "/"
+            }
+          ],
+          "method": [
+            {
+              "matcher": "exact",
+              "value": "GET"
+            }
+          ],
+          "destination": [
+            {
+              "matcher": "exact",
+              "value": "www.trumpwall.com"
+            }
+          ],
+          "scheme": [
+            {
+              "matcher": "exact",
+              "value": "http"
+            }
+          ],
+          "body": [
+            {
+              "matcher": "exact",
+              "value": ""
+            }
+          ],
+          "query": {}
+        },
+        "response": {
+          "status": 201,
+          "body": "nothing to see here",
+          "encodedBody": false,
+          "headers": {},
+          "templated": false
+        }
+      }
+    ],
+    "globalActions": {
+      "delays": []
+    }
+  }
+}
