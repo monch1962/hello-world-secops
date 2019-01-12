@@ -7,7 +7,7 @@ const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 
 describe('trumpwall', async () => {
-  it('it should return "nothing to see here"', () => {
+  /* it('it should return "nothing to see here"', () => {
     return chai.request('http://localhost:8080')
       .get('/trumpwall')
       .end((err, res) => {
@@ -15,6 +15,19 @@ describe('trumpwall', async () => {
         expect(res).to.have.status(200)
         expect(res.text).to.equal('nothing to see here')
         // done()
+      })
+    // done()
+  }) */
+  it('it should return "nothing to see here"', () => {
+    return chai.request('http://localhost:8080')
+      .get('/trumpwall')
+      .then(function (res) {
+        expect(res).to.have.status(200)
+        expect(res.text).to.equal('nothing to see here')
+        // done()
+      })
+      .catch(function (err) {
+        expect(err).to.be.null
       })
     // done()
   })

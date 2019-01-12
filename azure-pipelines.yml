@@ -53,17 +53,30 @@ steps:
   displayName: 'Run UI tests'
 
 - script: |
+    # Start the app running and save the PID
     node helloworld.js &
     APP_PID=$!
+
+    # Grab a copy of wilee (you'd probably want to get it from somewhere like Artefactory or Nexus...)
     wget https://www.dropbox.com/s/sthv0p77c5gip2g/wilee?dl=0 -O wilee
     chmod +x wilee
     ls -l wilee
+
+    # Run all API tests in test/api/*.wilee.json
     APP=http://localhost:8080 TESTCASES=test/api/*.wilee.json ./wilee
+
+    # If wilee fails with errors, kill the app instance and exit 1 so Devops can see the failure
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
+
+    # Don't need the app any more; kill it
     kill $APP_PID
+
+    # Let's display the summary of the integration test results
     TESTRESULTS=$(cat test/api/*.result.json)
     echo $TESTRESULTS | jq '.'
     echo $TESTRESULTS | jq 'del(.request, .expect, .actual)'
+    
+    # If there's any failed test cases, then exit 1 so Devops can see the failure
     FAILED_TESTS=$(echo $TESTRESULTS | jq '.pass_fail' | grep fail | wc -l)
     if [ $FAILED_TESTS -gt 0 ]; then echo $FAILED_TESTS "API tests failed" && exit 1; fi
   displayName: 'Run wilee API tests'
@@ -95,14 +108,23 @@ steps:
     HTTPS_PROXY=$OLD_HTTPS_PROXY
     # Stop Hoverfly
     ./hoverctl stop
+
+    # Kill the app
     kill $APP_PID
   displayName: 'Run integration tests (stubbed)'
 
 - script: |
+    # Start the app running, and capture the PID so we can kill it later
     node helloworld.js &
     APP_PID=$!
+
+    # Install the artillery load testing tool
     npm install -g artillery
     artillery -V
+
+    # Run the artillery load test
     artillery run test/performance/performance.yml
+
+    # Kill the app
     kill $APP_PID
   displayName: 'Run Artillery performance test'
