@@ -36,7 +36,7 @@ steps:
     -Dsonar.sources=. \
     -Dsonar.exclusions=node_modules/**,test/**,coverage/** \
     -Dsonar.host.url=https://sonarcloud.io \
-    -Dsonar.javascript.lcov.reportPaths=app/coverage/lcov.info \
+    -Dsonar.javascript.lcov.reportPaths=app/coverage/** \
     -Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
   displayName: 'Run sonarcloud code quality tests'
     
