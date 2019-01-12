@@ -7,8 +7,8 @@ const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 
 describe('trumpwall', async () => {
-  it('it should return "nothing to see here"', (done) => {
-    chai.request('http://localhost:8080')
+  it('it should return "nothing to see here"', () => {
+    return chai.request('http://localhost:8080')
       .get('/trumpwall')
       .end((err, res) => {
         expect(err).to.be.null
@@ -16,7 +16,7 @@ describe('trumpwall', async () => {
         expect(res.text).to.equal('nothing to see here')
         // done()
       })
-    done()
+    // done()
   })
 })
 /*
@@ -52,4 +52,5 @@ describe('trumpwall (promises)', async () => {
         assert.isNotOk(error, 'Promise error')
       })
   })
-}) */
+})
+*/
