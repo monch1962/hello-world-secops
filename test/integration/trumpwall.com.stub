@@ -41,8 +41,8 @@
           "query": {}
         },
         "response": {
-          "status": 200,
-          "body": "nothing",
+          "status": 201,
+          "body": "nothing to see here",
           "encodedBody": false,
           "headers": {},
           "templated": false

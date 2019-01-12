@@ -23,8 +23,10 @@ app.get('/', function (req, res) {
   res.send(homepage.content())
 })
 
-app.get('/trumpwall', function (req, res) {
-  res.send(trumpwall.content())
+app.get('/trumpwall', async function (req, res, next) {
+  const response = await trumpwall.content()
+  // console.log('response from /trumpwall call: ' + response)
+  res.send(response)
 })
 
 app.listen(port, () =>

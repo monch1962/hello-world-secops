@@ -1,9 +1,9 @@
 'use strict'
-const request = require('request')
+const request = require('request-promise')
+const TRUMPWALL_URL = 'http://www.trumpwall.com'
 
-// Trivial integration function to integration test
-exports.content = () => {
-  request('http://www.trumpwall.com', function (err, res, body) {
-    return (body)
-  })
+exports.content = async () => {
+  const result = await request.get({ 'url': TRUMPWALL_URL, 'proxy': process.env.HTTP_PROXY })
+  // console.log('result from http call: ' + result)
+  return (result)
 }
