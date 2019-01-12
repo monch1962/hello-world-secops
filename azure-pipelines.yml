@@ -24,6 +24,8 @@ steps:
     cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
     PATH=$SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/bin:$PATH
     echo $PATH
+    pwd
+    ls -al
     sonar-scanner -h
     sonar-scanner \
     -Dsonar.projectKey=monch1962_hello-world-devops \
@@ -40,10 +42,12 @@ steps:
 - script: |
     # Install the testcafe framework; we're going to use it for UI testing
     npm install -g testcafe
+    # Start the app running, and save the PID
     node helloworld.js &
     APP_PID=$!
     #npm run uitests
     testcafe "chrome:headless" test/ui/helloworld.ts
+    # Kill the app
     kill $APP_PID
   displayName: 'Run UI tests'
 
