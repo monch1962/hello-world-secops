@@ -1,5 +1,7 @@
 const chai = require('chai')
 const expect = chai.expect
+// let describe = chai.describe
+// let it = chai.it
 const code = require('../../components/version.js')
 
 describe('version-unit', () => {

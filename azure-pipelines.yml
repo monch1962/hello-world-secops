@@ -75,7 +75,7 @@ steps:
     TESTRESULTS=$(cat test/api/*.result.json)
     echo $TESTRESULTS | jq '.'
     echo $TESTRESULTS | jq 'del(.request, .expect, .actual)'
-    
+
     # If there's any failed test cases, then exit 1 so Devops can see the failure
     FAILED_TESTS=$(echo $TESTRESULTS | jq '.pass_fail' | grep fail | wc -l)
     if [ $FAILED_TESTS -gt 0 ]; then echo $FAILED_TESTS "API tests failed" && exit 1; fi
@@ -98,7 +98,7 @@ steps:
     # Start hoverfly running, and read in the stub config. In this case we're going to stub out 
     # the (fictional) trumpwall.com site
     ./hoverctl start
-    ./hoverctl import test/integration/trumpwall.com.stub
+    ./hoverctl import test/integration/trumpwall.com.stub.json
     # Run the stubbed integration tests
     npm run integrationtests
     if [ $? -ne 0 ]; then kill $APP_PID && HTTP_PROXY=$OLD_HTTP_PROXY && HTTPS_PROXY=$OLD_HTTPS_PROXY && ./hoverctl stop && exit 1; fi
