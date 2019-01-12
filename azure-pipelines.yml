@@ -20,9 +20,12 @@ steps:
     # First gather lines-of-coverage data from the test cases
     node_modules/nyc/bin/nyc.js --reporter=lcov --reporter=text-lcov npm test
 
+    # Download sonar-scanner
     SONARCLOUDDIR=/tmp
     wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip -O $SONARCLOUDDIR/sonar.zip
     unzip $SONARCLOUDDIR/sonar.zip -d /tmp
+
+    # Print out some diagnostic info
     ls -al $SONARCLOUDDIR
     cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
     PATH=$SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/bin:$PATH
@@ -30,6 +33,8 @@ steps:
     APP_DIR=$(pwd)
     ls -al
     sonar-scanner -h
+
+    # Run sonar-scanner
     sonar-scanner \
     -Dsonar.projectKey=monch1962_hello-world-devops \
     -Dsonar.organization=monch1962-github \
@@ -47,11 +52,14 @@ steps:
 - script: |
     # Install the testcafe framework; we're going to use it for UI testing
     npm install -g testcafe
+
     # Start the app running, and save the PID
     node helloworld.js &
     APP_PID=$!
+
     #npm run uitests
     testcafe "chrome:headless" test/ui/helloworld.ts
+
     # Kill the app
     kill $APP_PID
   displayName: 'Run UI tests'
@@ -90,19 +98,24 @@ steps:
     # values of these variables
     OLD_HTTP_PROXY=$HTTP_PROXY
     OLD_HTTPS_PROXY=$HTTPS_PROXY
+
     # Now repoint them to hoverfly, which will be running as a proxy
     HTTP_PROXY=http://localhost:8500
     HTTPS_PROXY=https://localhost:8500
+
     # Now start the app running, and capture the PID so we can kill it later
     node helloworld.js &
     APP_PID=$!
+
     # Get the hoverfly stub engine
     wget https://github.com/SpectoLabs/hoverfly/releases/download/v0.17.7/hoverfly_bundle_linux_amd64.zip -O hoverfly.zip
     unzip hoverfly.zip
+
     # Start hoverfly running, and read in the stub config. In this case we're going to stub out 
     # the (fictional) trumpwall.com site
     ./hoverctl start
-    ./hoverctl import test/integration/trumpwall.com.stub.json
+    ./hoverctl import test/integration/stub-definitions/trumpwall.com.stub.json
+
     # Run the stubbed integration tests
     npm run integrationtests
     if [ $? -ne 0 ]; then kill $APP_PID && HTTP_PROXY=$OLD_HTTP_PROXY && HTTPS_PROXY=$OLD_HTTPS_PROXY && ./hoverctl stop && exit 1; fi
@@ -110,6 +123,7 @@ steps:
     # Now we've run the stubbed integration tests, repoint HTTP_PROXY and HTTPS_PROXY to their previous values
     HTTP_PROXY=$OLD_HTTP_PROXY
     HTTPS_PROXY=$OLD_HTTPS_PROXY
+    
     # Stop Hoverfly
     ./hoverctl stop
 
