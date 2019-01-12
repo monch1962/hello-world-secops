@@ -13,7 +13,7 @@ describe('trumpwall', () => {
         expect(err).to.be.null
         expect(res).to.have.status(200)
         expect(res.text).to.equal('nothing to see here')
-        // done()
+        done()
       })
   })
 })
