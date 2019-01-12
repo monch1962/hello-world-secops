@@ -6,7 +6,7 @@ const assert = chai.assert
 const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 
-describe('trumpwall', async () => {
+describe('trumpwall-integration', async () => {
   /* it('it should return "nothing to see here"', () => {
     return chai.request('http://localhost:8080')
       .get('/trumpwall')
@@ -18,7 +18,7 @@ describe('trumpwall', async () => {
       })
     // done()
   }) */
-  it('it should return "nothing to see here"', () => {
+  it('it should return "nothing to see here"', async () => {
     return chai.request('http://localhost:8080')
       .get('/trumpwall')
       .then(function (res) {

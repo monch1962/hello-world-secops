@@ -4,8 +4,9 @@
   "description": "Trivial application designed to understand Azure DevOps workflows",
   "main": "helloworld.js",
   "scripts": {
+    "test": "mocha test/unit/*.js && mocha test/integration/*.js",
     "unittests": "mocha test/unit/*.js",
-    "uitests": "mocha test/ui/*.js",
+    "uitests": "testcafe 'chrome:headless' test/ui/helloworld.ts",
     "integrationtests": "mocha test/integration/*.js"
   },
   "author": "David Mitchell",
@@ -21,7 +22,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
     "mockery": "^2.1.0",
-    "testcafe": "^0.23.2"
+    "testcafe": "^0.23.3"
   },
   "dependencies": {
     "axios": "^0.18.0",
