@@ -10,7 +10,7 @@ const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 
 describe('trumpwall-integration', () => {
-  it('it should return "nothing to see here"', async () => {
+  /* it('it should return "nothing to see here"', async () => {
     return chai.request('http://localhost:8080')
       .get('/trumpwall')
       .then(function (res) {
@@ -22,9 +22,9 @@ describe('trumpwall-integration', () => {
         expect(err).to.be.null
       })
     // done()
-  })
+  }) */
 
-  it('it should return "nothing to see here"2', () => {
+  it('it should return "nothing to see here"2', async () => {
     request('http://localhost:8080').get('/trumpwall')
       .expect(function (res) {
         res.to.have.status(200)
