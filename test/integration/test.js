@@ -1,4 +1,5 @@
 const chai = require('chai')
+const request = require('supertest')
 var expect = chai.expect
 // let describe = chai.describe
 // let it = chai.it
@@ -22,11 +23,12 @@ describe('trumpwall-integration', () => {
       })
     // done()
   })
-/*
+
   it('it should return "nothing to see here"2', async () => {
-    const result = await chai.request('http://localhost:8080')
-    expect(result).to.have.status(200)
-    expect(result).to.have.body('nothing to see here')
+    request('http://localhost:8080').get('/trumpwall')
+      .expect(function (res) {
+        res.to.have.status(200)
+        res.body.to.have.text('nothing to see here')
+      })
   })
-  */
 })
