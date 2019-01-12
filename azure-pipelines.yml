@@ -28,7 +28,7 @@ steps:
     sonar-scanner \
     -Dsonar.projectKey=monch1962_hello-world-devops \
     -Dsonar.organization=monch1962-github \
-    -Dsonar.sources=. \
+    -Dsonar.sources=./helloworld.js,./components/*.js,./html/*.js \
     -Dsonar.host.url=https://sonarcloud.io \
     -Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
   displayName: 'Run sonarcloud code quality tests'
