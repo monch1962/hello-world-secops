@@ -12,6 +12,7 @@
   "author": "David Mitchell",
   "license": "ISC",
   "devDependencies": {
+    "axe-testcafe": "^1.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "eslint": "^5.10.0",

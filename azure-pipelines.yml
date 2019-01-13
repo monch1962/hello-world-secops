@@ -137,6 +137,22 @@ steps:
     APP_PID=$!
 
     # Install the artillery load testing tool
+    npm install -g axe-cli
+    axe --help
+
+    # Run the Axe accessibility tests (if there's more pages to test, just give it a comma-separated list of URLs)
+    axe http://localhost:8080
+
+    # Kill the app
+    kill $APP_PID
+  displayName: 'Run Axe accessibility tests'
+  
+- script: |
+    # Start the app running, and capture the PID so we can kill it later
+    node helloworld.js &
+    APP_PID=$!
+
+    # Install the artillery load testing tool
     npm install -g artillery
     artillery -V
 
