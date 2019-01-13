@@ -48,6 +48,14 @@ Execute tests using
 
 and analyse results
 
+#### Running accessibility tests
+
+`$ npm install -g axe-cli`
+
+`$ axe http://localhost:8080`
+
+Note that you can provide a comma-separated list of URLs for Axe to run its accessibility tests against
+
 #### Running performance tests
 
 `$ npm install -g artillery`
