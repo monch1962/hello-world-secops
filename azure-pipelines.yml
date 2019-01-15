@@ -108,7 +108,7 @@ steps:
     ./hoverctl start
     ./hoverctl import test/integration/stub-definitions/trumpwall.com.stub.json
 
-    # Run the stubbed integration tests
+    # Run the stubbed integration tests, which try to hit http://trumpwall.com
     npm run integrationtests
     if [ $? -ne 0 ]; then kill $APP_PID && ./hoverctl stop && exit 1; fi
 
