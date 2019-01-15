@@ -110,14 +110,14 @@ steps:
 
     # Run the stubbed integration tests
     npm run integrationtests
-    if [ $? -ne 0 ]; then kill $APP_PID && HTTP_PROXY=$OLD_HTTP_PROXY && HTTPS_PROXY=$OLD_HTTPS_PROXY && ./hoverctl stop && exit 1; fi
+    if [ $? -ne 0 ]; then kill $APP_PID && ./hoverctl stop && exit 1; fi
 
     # Stop Hoverfly
     ./hoverctl stop
 
     # Kill the app
     kill $APP_PID
-  displayName: 'Run integration tests (stubbed)'
+  displayName: 'Run integration tests (against stubbed backend)'
 
 - script: |
     # Start the app running, and capture the PID so we can kill it later
