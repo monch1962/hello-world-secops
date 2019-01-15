@@ -94,17 +94,9 @@ steps:
   displayName: 'Run wilee API tests'
 
 - script: |
-    # We need to repoint HTTP_PROXY and HTTPS_PROXY to point to our stub engine (hoverfly). First save the current
-    # values of these variables
-    OLD_HTTP_PROXY=$HTTP_PROXY
-    OLD_HTTPS_PROXY=$HTTPS_PROXY
-
-    # Now repoint them to hoverfly, which will be running as a proxy
-    HTTP_PROXY=http://localhost:8500
-    HTTPS_PROXY=https://localhost:8500
-
     # Now start the app running, and capture the PID so we can kill it later
-    node helloworld.js &
+    # Note that we're setting HTTP_PROXY to point to the Hoverfly stub, which we'll start next
+    HTTP_PROXY=http://localhost:8500 node helloworld.js &
     APP_PID=$!
 
     # Get the hoverfly stub engine
@@ -116,20 +108,16 @@ steps:
     ./hoverctl start
     ./hoverctl import test/integration/stub-definitions/trumpwall.com.stub.json
 
-    # Run the stubbed integration tests
+    # Run the stubbed integration tests, which try to hit http://trumpwall.com
     npm run integrationtests
-    if [ $? -ne 0 ]; then kill $APP_PID && HTTP_PROXY=$OLD_HTTP_PROXY && HTTPS_PROXY=$OLD_HTTPS_PROXY && ./hoverctl stop && exit 1; fi
+    if [ $? -ne 0 ]; then kill $APP_PID && ./hoverctl stop && exit 1; fi
 
-    # Now we've run the stubbed integration tests, repoint HTTP_PROXY and HTTPS_PROXY to their previous values
-    HTTP_PROXY=$OLD_HTTP_PROXY
-    HTTPS_PROXY=$OLD_HTTPS_PROXY
-    
     # Stop Hoverfly
     ./hoverctl stop
 
     # Kill the app
     kill $APP_PID
-  displayName: 'Run integration tests (stubbed)'
+  displayName: 'Run integration tests (against stubbed backend)'
 
 - script: |
     # Start the app running, and capture the PID so we can kill it later
