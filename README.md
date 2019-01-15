@@ -50,7 +50,7 @@ and analyse results
 
 #### Running accessibility tests
 
-`$ npm install -g axe-cli`
+`$ npm install -g axe-cli` 
 
 `$ axe http://localhost:8080`
 
