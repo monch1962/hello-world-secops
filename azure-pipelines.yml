@@ -13,6 +13,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    # Install the app and all its dependencies
     npm install
   displayName: 'npm install and build'
   
@@ -108,7 +109,8 @@ steps:
     ./hoverctl start
     ./hoverctl import test/integration/stub-definitions/trumpwall.com.stub.json
 
-    # Run the stubbed integration tests, which try to hit http://trumpwall.com
+    # Run the stubbed integration tests, which try to hit http://trumpwall.com via the /trumpwall endpoint
+    # If any tests fail, exit 1 to fail this step in the pipeline
     npm run integrationtests
     if [ $? -ne 0 ]; then kill $APP_PID && ./hoverctl stop && exit 1; fi
 
@@ -146,6 +148,9 @@ steps:
 
     # Run the artillery load test
     artillery run test/performance/performance.yml
+
+    # If test fails, exit 1 to fail this step in the pipeline
+    if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
 
     # Kill the app
     kill $APP_PID
