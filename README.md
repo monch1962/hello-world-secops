@@ -19,6 +19,34 @@ Trivial app to explore workflow &amp; CI pipelining in different CI frameworks
 ## Intention
 This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs and a few performance tests. It's also linked to https://sonarcloud.io for code quality checks. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks
 
+## Architecture
+
+The following diagram
+
+    ┌─────────────────────────────────────┐
+    │             helloworld              │
+    │                                     │
+    │                                     │
+    │                                     │
+    ├────────────────┐          ┌─────────┤
+    │    / (HTML)    │◀────────▶│ (HTML)  │       ┌─────────────────┐
+    ├────────────────┤          └─────────┤       │                 │
+    │/trumpwall (API)│◀ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─▶│www.trumpwall.com│
+    ├────────────────┤          ┌─────────┤       │                 │
+    │  /about (API)  │◀────────▶│ (JSON)  │       └─────────────────┘
+    ├────────────────┤          ├─────────┤
+    │ /version (API) │◀────────▶│ (JSON)  │
+    └────────────────┴──────────┴─────────┘
+
+shows the high level architecture of the helloworld app:
+- there is a single HTML page, accessed using the `/` URL
+- there are 3 REST APIs
+  - `/version` returns a JSON value, which is hardcoded within helloworld
+  - `/about` also returns a JSON value, which is hardcoded within helloworld
+  - `/trumpwall` returns a JSON value, which it gets from an external website (http://trumpwall.com)
+
+This design may evolve over time, but is sufficient to demonstrate the capabilities of different testing streams.
+
 ## Manual app startup & test execution
 
 ### Starting the app
