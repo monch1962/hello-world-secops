@@ -41,9 +41,11 @@ The following diagram
 shows the high level architecture of the helloworld app:
 - there is a single HTML page, accessed using the `/` URL
 - there are 3 REST APIs
-  - `/version` returns a JSON value, which is hardcoded within helloworld
-  - `/about` also returns a JSON value, which is hardcoded within helloworld
-  - `/trumpwall` returns a JSON value, which it gets from an external website (http://trumpwall.com)
+  - `GET /version` returns a JSON value, which is hardcoded within helloworld
+  - `GET /about` also returns a JSON value, which is hardcoded within helloworld
+  - `GET /trumpwall` returns a JSON value, which it gets from an external website (http://trumpwall.com)
+  
+If `http://trumpwall.com` doesn't exist (and it doesn't as I'm writing this), then hitting `GET /trumpwall` will return an error. We therefore need to stub `http://trumpwall.com` if we want the `GET /trumpwall` API to work correctly. Note that the high-level approach for dealing with this issue would also work for backend systems that aren't available for testing.
 
 This design may evolve over time, but is sufficient to demonstrate the capabilities of different testing streams.
 
