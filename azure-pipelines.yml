@@ -19,7 +19,7 @@ steps:
   
 - script: |
     # First gather lines-of-coverage data from the test cases
-    node_modules/nyc/bin/nyc.js --reporter=lcov --reporter=text-lcov npm test
+    # node_modules/nyc/bin/nyc.js --reporter=lcov --reporter=text-lcov npm test
 
     # Download sonar-scanner
     SONARCLOUDDIR=/tmp

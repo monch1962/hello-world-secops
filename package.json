@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha test/unit/*.js && mocha test/integration/*.js && testcafe \"chrome:headless\" test/ui/helloworld.ts",
     "unittests": "MOCHA_FILE=./TEST-unittests.xml mocha --reporter mocha-junit-reporter test/unit/*.js",
-    "uitests": "testcafe \"chrome:headless\" test/ui/helloworld.ts",
+    "uitests": "testcafe \"chrome:headless\" test/ui/helloworld.ts -r xunit:./TEST-uitests.xml",
     "integrationtests": "MOCHA_FILE=./TEST-integrationtests.xml mocha --reporter mocha-junit-reporter test/integration/*.js"
   },
   "author": "David Mitchell",
@@ -26,7 +26,8 @@
     "mockery": "^2.1.0",
     "nyc": "^13.1.0",
     "supertest": "^3.3.0",
-    "testcafe": "^0.23.3"
+    "testcafe": "^0.23.3",
+    "testcafe-reporter-xunit": "^2.1.0"
   },
   "dependencies": {
     "axios": "^0.18.0",
