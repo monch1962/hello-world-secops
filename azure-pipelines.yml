@@ -54,6 +54,9 @@ steps:
     # Install the testcafe framework; we're going to use it for UI testing
     npm install -g testcafe
 
+    # Install Testcafe's XUnit reporting module
+    npm install -g testcafe-reporter-xunit
+
     # Start the app running, and save the PID
     node helloworld.js &
     APP_PID=$!
