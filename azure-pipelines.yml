@@ -50,6 +50,19 @@ steps:
     npm run unittests
   displayName: 'Run unit tests'
 
+# Publish Test Results
+# Publish Test Results to Azure Pipelines/TFS
+- task: PublishTestResults@1
+  inputs:
+    testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit
+    testResultsFiles: '**/TEST-unittests.xml' 
+    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+    #mergeTestResults: false # Optional
+    testRunTitle: 'Unit' # Optional
+    #buildPlatform: # Optional
+    #buildConfiguration: # Optional
+    #publishRunAttachments: true # Optional
+
 - script: |
     # Install the testcafe framework; we're going to use it for UI testing
     npm install -g testcafe
@@ -68,6 +81,19 @@ steps:
     # Kill the app
     kill $APP_PID
   displayName: 'Run UI tests'
+
+  # Publish Test Results
+# Publish Test Results to Azure Pipelines/TFS
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit
+    testResultsFiles: '**/TEST-uitests.xml' 
+    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+    #mergeTestResults: false # Optional
+    testRunTitle: 'UI' # Optional
+    #buildPlatform: # Optional
+    #buildConfiguration: # Optional
+    #publishRunAttachments: true # Optional
 
 - script: |
     # Start the app running and save the PID
@@ -125,6 +151,19 @@ steps:
     kill $APP_PID
   displayName: 'Run integration tests (against stubbed backend)'
 
+# Publish Test Results
+# Publish Test Results to Azure Pipelines/TFS
+- task: PublishTestResults@3
+  inputs:
+    testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit
+    testResultsFiles: '**/TEST-integrationtests.xml' 
+    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+    #mergeTestResults: false # Optional
+    testRunTitle: 'Integration' # Optional
+    #buildPlatform: # Optional
+    #buildConfiguration: # Optional
+    #publishRunAttachments: true # Optional
+
 - script: |
     # Start the app running, and capture the PID so we can kill it later
     node helloworld.js &
@@ -163,15 +202,3 @@ steps:
     kill $APP_PID
   displayName: 'Run Artillery performance test'
 
-# Publish Test Results
-# Publish Test Results to Azure Pipelines/TFS
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit
-    testResultsFiles: '**/TEST-*.xml' 
-    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
-    #mergeTestResults: false # Optional
-    #testRunTitle: # Optional
-    #buildPlatform: # Optional
-    #buildConfiguration: # Optional
-    #publishRunAttachments: true # Optional
