@@ -135,7 +135,8 @@ steps:
     axe --help
 
     # Run the Axe accessibility tests (if there's more pages to test, just give it a comma-separated list of URLs)
-    axe http://localhost:8080
+    # Appending --exit will cause the tests to exit 1 if problems are found. This could be handy but I'm not using it yet
+    axe http://localhost:8080 --exit
 
     # Kill the app
     kill $APP_PID
