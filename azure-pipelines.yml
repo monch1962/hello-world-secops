@@ -147,7 +147,7 @@ steps:
     artillery -V
 
     # Run the artillery load test
-    artillery run test/performance/performance.yml
+    artillery run -o TEST-artillery.json test/performance/performance.yml
 
     # If test fails, exit 1 to fail this step in the pipeline
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
