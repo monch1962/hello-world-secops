@@ -60,6 +60,7 @@ steps:
 
     #npm run uitests
     testcafe "chrome:headless" test/ui/helloworld.ts
+    cat TEST-uitests.xml
 
     # Kill the app
     kill $APP_PID
