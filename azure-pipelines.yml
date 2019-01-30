@@ -151,18 +151,19 @@ steps:
     artillery -V
 
     # Run the artillery load test
-    artillery run -o TEST-artillery.json test/performance/performance.yml
+    #artillery run -o TEST-artillery.json test/performance/performance.yml
+    artillery run test/performance/performance.yml
 
     # If test fails, exit 1 to fail this step in the pipeline
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
 
     # Generate the Artillery test report
-    artillery report TEST-artillery.json
+    #artillery report TEST-artillery.json
 
-    ls -l
+    #ls -l
 
     # Display Artillery test results in log
-    cat TEST-artillery.json
+    #cat TEST-artillery.json
     
     # Kill the app
     kill $APP_PID
