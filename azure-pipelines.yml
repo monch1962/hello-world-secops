@@ -62,7 +62,7 @@ steps:
     APP_PID=$!
 
     #npm run uitests
-    testcafe "chrome:headless,firefox:headless" test/ui/**
+    testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X" test/ui/**
     #testcafe "firefox:headless" test/ui/helloworld.ts
     cat TEST-uitests.xml
 
