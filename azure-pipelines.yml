@@ -131,7 +131,7 @@ steps:
     node helloworld.js &
     APP_PID=$!
 
-    # Install the artillery load testing tool
+    # Install the Axe CLI accessibility testing tool
     npm install -g axe-cli
     axe --help
 
