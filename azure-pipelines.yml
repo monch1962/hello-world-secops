@@ -196,3 +196,8 @@ steps:
     #cleanTargetFolder: false # Optional
     #overWrite: false # Optional
     #flattenFolders: false # Optional
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: UI-test-screenshots
