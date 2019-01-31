@@ -57,6 +57,9 @@ steps:
     # Install Testcafe's XUnit reporting module
     npm install -g testcafe-reporter-xunit
 
+    # Install GUID library
+    npm install -g guid-typescript
+
     # Start the app running, and save the PID
     node helloworld.js &
     APP_PID=$!

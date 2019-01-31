@@ -33,9 +33,7 @@
     "axios": "^0.18.0",
     "chai-http": "^4.2.1",
     "express": "^4.16.4",
-    "guid-typescript": "^1.0.9",
     "request": "^2.88.0",
-    "request-promise": "^4.2.2",
-    "ua-parser-js": "^0.7.19"
+    "request-promise": "^4.2.2"
   }
 }
