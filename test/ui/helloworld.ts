@@ -6,4 +6,5 @@ fixture `Homepage`
 test('Test helloworld content on homepage', async t => {
     await t
         .expect(Selector('html').innerText).contains('hello world!')
+        .takeScreenshot()
 });
