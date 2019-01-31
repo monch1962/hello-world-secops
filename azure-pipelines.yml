@@ -62,7 +62,7 @@ steps:
     APP_PID=$!
 
     # Run all available UI tests on multiple browsers, and save results in XUnit format
-    testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X" test/ui/** --reporter xunit > TEST-uitests.xml
+    testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X,chrome:headless:emulation:device=Galaxy S5,chrome:headless:emulation:device=Pixel 2,chrome:headless:emulation:device=iPad" test/ui/** --reporter xunit > TEST-uitests.xml
 
     cat TEST-uitests.xml
 
