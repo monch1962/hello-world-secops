@@ -61,9 +61,9 @@ steps:
     node helloworld.js &
     APP_PID=$!
 
-    #npm run uitests
-    testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X" test/ui/**
-    #testcafe "firefox:headless" test/ui/helloworld.ts
+    # Run all available UI tests on multiple browsers, and save results in XUnit format
+    testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X" test/ui/** --reporter xunit > TEST-uitests.xml
+
     cat TEST-uitests.xml
 
     # Kill the app
