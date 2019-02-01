@@ -97,6 +97,10 @@ Note that you can provide a comma-separated list of URLs for Axe to run its acce
 
 It's complicated... Refer to https://sonarcloud.io/ for detailed instructions on how to set it up (this complexity is the reason why CI is so nice to have, so I can get it to do the hack work for me!)
 
+#### Open-source vulnerability scans
+
+The chain of open-source dependencies used in this application is scanned on every checkin by Whitesource Bolt. Details for how to set this up for Github repos are at https://whitesource.atlassian.net/wiki/spaces/WD/pages/697696422/GitHub+Integration
+
 ## Automated CI pipeline execution
 The app is hooked into its own Azure DevOps pipeline, and will run through all build/test steps automatically whenever a pull request is made to this repo. Note the build status 'badge' earlier in this README file - it indicates whether the build/test steps passed last time the pipeline was executed.
 
