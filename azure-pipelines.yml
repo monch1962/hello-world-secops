@@ -57,12 +57,16 @@ steps:
     # Install Testcafe's XUnit reporting module
     npm install -g testcafe-reporter-xunit
 
+    # Install GUID library
+    # npm install --save-dev guid-typescript
+
     # Start the app running, and save the PID
     node helloworld.js &
     APP_PID=$!
 
-    #npm run uitests
-    testcafe "chrome:headless" test/ui/helloworld.ts
+    # Run all available UI tests on multiple browsers, and save results in XUnit format
+    testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X,chrome:headless:emulation:device=Galaxy S5,chrome:headless:emulation:device=Pixel 2,chrome:headless:emulation:device=iPad" test/ui/** --reporter xunit --screenshots . > TEST-uitests.xml
+
     cat TEST-uitests.xml
 
     # Kill the app
@@ -130,7 +134,7 @@ steps:
     node helloworld.js &
     APP_PID=$!
 
-    # Install the artillery load testing tool
+    # Install the Axe CLI accessibility testing tool
     npm install -g axe-cli
     axe --help
 
@@ -182,3 +186,21 @@ steps:
     #buildPlatform: # Optional
     #buildConfiguration: # Optional
     #publishRunAttachments: true # Optional
+
+# Copy Files
+# Copy files from source folder to target folder using match patterns (The match patterns will only match file paths, not folder paths)
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: $(Build.SourcesDirectory)
+    contents: |
+      2*/**/*.png
+      !2*/**/thumbnails/*.png
+    targetFolder: $(Build.ArtifactStagingDirectory)
+    #cleanTargetFolder: false # Optional
+    #overWrite: false # Optional
+    #flattenFolders: false # Optional
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: UI-test-screenshots
