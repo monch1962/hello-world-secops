@@ -158,7 +158,7 @@ steps:
     docker build --rm -t htrace.sh -f Dockerfile .
 
     # Run htrace.sh tests against the nominated web site
-    docker run --rm -it --name htrace.sh htrace.sh -d $WEBSITE -s -h
+    docker run --rm -t --name htrace.sh htrace.sh -d $WEBSITE -s -h
   displayName: 'Run http/https security checks'
 
 - script: |
