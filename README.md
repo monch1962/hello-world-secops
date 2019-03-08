@@ -54,7 +54,7 @@ This design may evolve over time, but is sufficient to demonstrate the capabilit
 ### Starting the app
 To start the app running in a CI-ready state
 
-`$ NODE_ENV=test npm install && node helloworld.js`
+`$ NODE_ENV=test npm install && node helloworld.js`   
 
 #### Running unit tests
 
