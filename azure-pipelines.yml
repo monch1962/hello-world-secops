@@ -40,7 +40,7 @@ steps:
     -Dsonar.projectKey=monch1962_hello-world-devops \
     -Dsonar.organization=monch1962-github \
     -Dsonar.sources=. \
-    -Dsonar.exclusions=node_modules/**,test/**,coverage/** \
+    -Dsonar.exclusions=node_modules/**,tests/**,coverage/** \
     -Dsonar.host.url=https://sonarcloud.io \
     -Dsonar.javascript.lcov.reportPaths=app/coverage/** \
     -Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
@@ -65,7 +65,7 @@ steps:
     APP_PID=$!
 
     # Run all available UI tests on multiple browsers, and save results in XUnit format
-    testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X,chrome:headless:emulation:device=Galaxy S5,chrome:headless:emulation:device=Pixel 2,chrome:headless:emulation:device=iPad" test/ui/** --reporter xunit --screenshots . > TEST-uitests.xml
+    testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X,chrome:headless:emulation:device=Galaxy S5,chrome:headless:emulation:device=Pixel 2,chrome:headless:emulation:device=iPad" tests/ui/** --reporter xunit --screenshots . > TEST-uitests.xml
 
     cat TEST-uitests.xml
 
@@ -84,7 +84,7 @@ steps:
     ls -l wilee
 
     # Run all API tests in test/api/*.wilee.json
-    APP=http://localhost:8080 TESTCASES=test/api/*.wilee.json ./wilee
+    APP=http://localhost:8080 TESTCASES=tests/api/*.wilee.json ./wilee
 
     # If wilee fails with errors, kill the app instance and exit 1 so Devops can see the failure
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
@@ -93,7 +93,7 @@ steps:
     kill $APP_PID
 
     # Let's display the summary of the integration test results
-    TESTRESULTS=$(cat test/api/*.result.json)
+    TESTRESULTS=$(cat tests/api/*.result.json)
     echo $TESTRESULTS | jq '.'
     echo $TESTRESULTS | jq 'del(.request, .expect, .actual)'
 
@@ -115,7 +115,7 @@ steps:
     # Start hoverfly running, and read in the stub config. In this case we're going to stub out 
     # the (fictional) trumpwall.com site
     ./hoverctl start
-    ./hoverctl import test/integration/stub-definitions/trumpwall.com.stub.json
+    ./hoverctl import tests/integration/stub-definitions/trumpwall.com.stub.json
 
     # Run the stubbed integration tests, which try to hit http://trumpwall.com via the /trumpwall endpoint
     # If any tests fail, exit 1 to fail this step in the pipeline
@@ -172,7 +172,7 @@ steps:
 
     # Run the artillery load test
     #artillery run -o TEST-artillery.json test/performance/performance.yml
-    artillery run test/performance/performance.yml
+    artillery run tests/performance/performance.yml
 
     # If test fails, exit 1 to fail this step in the pipeline
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
