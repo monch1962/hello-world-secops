@@ -4,10 +4,10 @@
   "description": "Trivial application designed to understand Azure DevOps workflows",
   "main": "helloworld.js",
   "scripts": {
-    "test": "mocha test/unit/*.js && mocha test/integration/*.js && testcafe \"chrome:headless\" test/ui/helloworld.ts",
-    "unittests": "MOCHA_FILE=./TEST-unittests.xml PROPERTIES=testsuiteTitle:UnitTests mocha --reporter mocha-junit-reporter test/unit/*.js",
-    "uitests": "testcafe \"chrome:headless\" test/ui/helloworld.ts --reporter xunit:./TEST-uitests.xml",
-    "integrationtests": "MOCHA_FILE=./TEST-integrationtests.xml PROPERTIES=testsuiteTitle:IntegrationTests mocha --reporter mocha-junit-reporter test/integration/*.js"
+    "test": "mocha tests/unit/*.js && mocha tests/integration/*.js && testcafe \"chrome:headless\" tests/ui/helloworld.ts",
+    "unittests": "MOCHA_FILE=./TEST-unittests.xml PROPERTIES=testsuiteTitle:UnitTests mocha --reporter mocha-junit-reporter tests/unit/*.js",
+    "uitests": "testcafe \"chrome:headless\" tests/ui/helloworld.ts --reporter xunit:./TEST-uitests.xml",
+    "integrationtests": "MOCHA_FILE=./TEST-integrationtests.xml PROPERTIES=testsuiteTitle:IntegrationTests mocha --reporter mocha-junit-reporter tests/integration/*.js"
   },
   "author": "David Mitchell",
   "license": "ISC",
