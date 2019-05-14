@@ -106,5 +106,3 @@ The app is hooked into its own Azure DevOps pipeline, and will run through all b
 
 Pipeline build & test config for this test is held in the file `azure-pipelines.yml`
 
-
-
