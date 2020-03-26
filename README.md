@@ -105,5 +105,3 @@ The chain of open-source dependencies used in this application is scanned on eve
 The app is hooked into its own Azure DevOps pipeline, and will run through all build/test steps automatically whenever a pull request is made to this repo. Note the build status 'badge' earlier in this README file - it indicates whether the build/test steps passed last time the pipeline was executed.
 
 Pipeline build & test config for this test is held in the file `azure-pipelines.yml`
-
-
