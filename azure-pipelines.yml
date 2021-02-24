@@ -18,6 +18,11 @@ steps:
   displayName: 'npm install and build'
   
 - script: |
+    echo "##vso[task.setvariable variable=JAVA_HOME]$(JAVA_HOME_11_X64)"
+    echo "##vso[task.setvariable variable=PATH]$(JAVA_HOME_11_X64)/bin:$(PATH)"
+  displayName: "Set java version"
+  
+- script: |
     # First gather lines-of-coverage data from the test cases
     # node_modules/nyc/bin/nyc.js --reporter=lcov --reporter=text-lcov npm test
     sudo apt-get update && sudo apt install default-jre default-jdk
