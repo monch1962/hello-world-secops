@@ -42,14 +42,20 @@ steps:
     sonar-scanner -h
 
     # Run sonar-scanner
-    sonar-scanner \
-    -Dsonar.projectKey=monch1962_hello-world-devops \
-    -Dsonar.organization=monch1962-github \
-    -Dsonar.sources=. \
-    -Dsonar.exclusions=node_modules/**,tests/**,coverage/** \
-    -Dsonar.host.url=https://sonarcloud.io \
-    -Dsonar.javascript.lcov.reportPaths=app/coverage/** \
-    -Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
+    #sonar-scanner \
+    #-Dsonar.projectKey=monch1962_hello-world-devops \
+    #-Dsonar.organization=monch1962-github \
+    #-Dsonar.sources=. \
+    #-Dsonar.exclusions=node_modules/**,tests/**,coverage/** \
+    #-Dsonar.host.url=https://sonarcloud.io \
+    #-Dsonar.javascript.lcov.reportPaths=app/coverage/** \
+    #-Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
+    docker run \
+    --rm \
+    -e SONAR_HOST_URL="http://https://sonarcloud.io" \
+    -e SONAR_LOGIN="8725538bd2603c6990da57d9c53afe2d176fb844" \
+    -v "https://github.com/monch1962/hello-world-devops:/usr/src" \
+    sonarsource/sonar-scanner-cli
   displayName: 'Run sonarcloud code quality tests'
     
 - script: |
