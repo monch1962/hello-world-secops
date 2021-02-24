@@ -160,6 +160,7 @@ steps:
   
 - script: |
     # This isn't a real application that we're testing, so let's test a 'real' web site as part of the pipeline
+    # Note that you'd typically only run these tests against e.g. a blue/green production candidate immediately prior to bringing it online
     WEBSITE=https://nmap.org
 
     # Grab a copy of htrace.sh
@@ -170,7 +171,7 @@ steps:
     #docker build --rm -t htrace.sh -f Dockerfile .
 
     # Run htrace.sh tests against the nominated web site
-    docker run --rm -t --name htrace.sh htrace.sh -u $WEBSITE -s -h --testssl --observatory --ssllabs --mixed-content --nse --waf --dns --http2
+    docker run --rm -t --name htrace.sh htrace.sh -u $WEBSITE -s -h #--testssl --observatory --ssllabs --mixed-content --nse --waf --dns --http2
   displayName: 'Run http/https security checks'
 
 - script: |
@@ -205,7 +206,7 @@ steps:
 # Publish Test Results to Azure Pipelines/TFS
 - task: PublishTestResults@2
   inputs:
-    testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit
+    testResultsFormat: 'xUnit' # Options: JUnit, NUnit, VSTest, xUnit
     testResultsFiles: '**/TEST-*.xml' 
     #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
     #mergeTestResults: false # Optional
