@@ -49,7 +49,7 @@ steps:
     --rm \
     -e SONAR_HOST_URL="https://sonarcloud.io" \
     -e SONAR_LOGIN="8725538bd2603c6990da57d9c53afe2d176fb844" \
-    -v ${pwd}:/usr/src \
+    -v $(pwd):/usr/src \
     sonarsource/sonar-scanner-cli \
     -Dsonar.projectKey=monch1962_hello-world-devops \
     -Dsonar.organization=monch1962-github \
