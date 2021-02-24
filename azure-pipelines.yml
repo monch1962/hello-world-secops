@@ -160,7 +160,11 @@ steps:
   
 - script: |
     # This isn't a real application that we're testing, so let's test a 'real' web site as part of the pipeline
-    # Note that you'd typically only run these tests against e.g. a blue/green production candidate immediately prior to bringing it online
+    # Note that these tests may take an extended period to execute depending on depth of coverage, and results won't be relevant to developers
+    # - primary audience is SecOps
+    # You'd typically only run these tests in CD against e.g. a blue/green production candidate immediately prior to bringing it online
+    # You might also choose to run these tests on a timed schedule (e.g. 2am each day) to provide ongoing assurance for production
+
     WEBSITE=https://nmap.org
 
     # Grab a copy of htrace.sh
@@ -204,16 +208,21 @@ steps:
 
 # Publish Test Results
 # Publish Test Results to Azure Pipelines/TFS
+#- task: PublishTestResults@2
+#  inputs:
+#    testResultsFormat: 'xUnit' # Options: JUnit, NUnit, VSTest, xUnit
+#    testResultsFiles: '**/TEST-*.xml' 
+#    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+#    #mergeTestResults: false # Optional
+#    #testRunTitle: 'Integration' # Optional
+#    #buildPlatform: # Optional
+#    #buildConfiguration: # Optional
+#    #publishRunAttachments: true # Optional
 - task: PublishTestResults@2
+  condition: succeededOrFailed()
   inputs:
-    testResultsFormat: 'xUnit' # Options: JUnit, NUnit, VSTest, xUnit
-    testResultsFiles: '**/TEST-*.xml' 
-    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
-    #mergeTestResults: false # Optional
-    #testRunTitle: 'Integration' # Optional
-    #buildPlatform: # Optional
-    #buildConfiguration: # Optional
-    #publishRunAttachments: true # Optional
+    testRunner: JUnit
+    testResultsFiles: '**/TEST-*.xml'
 
 # Copy Files
 # Copy files from source folder to target folder using match patterns (The match patterns will only match file paths, not folder paths)
