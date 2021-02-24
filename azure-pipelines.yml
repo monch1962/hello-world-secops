@@ -159,18 +159,23 @@ steps:
   displayName: 'Run Axe accessibility tests'
   
 - script: |
-    # This isn't a real application that we're testing, so let's test a 'real' app as part of the pipeline
-    # WEBSITE=https://www.microsoft.com
+    # This isn't a real application that we're testing, so let's test a 'real' web site as part of the pipeline
+    # Note that these tests may take an extended period to execute depending on depth of coverage, and results won't be relevant to developers
+    # - primary audience is SecOps
+    # You'd typically only run these tests in CD against e.g. a blue/green production candidate immediately prior to bringing it online
+    # You might also choose to run these tests on a timed schedule (e.g. 2am each day) to provide ongoing assurance for production
+
+    WEBSITE=https://nmap.org
 
     # Grab a copy of htrace.sh
-    # git clone https://github.com/trimstray/htrace.sh.git
+    git clone https://github.com/trimstray/htrace.sh.git
 
     # Build a htrace.sh Docker container
-    # cd htrace.sh/build
-    # docker build --rm -t htrace.sh -f Dockerfile .
+    cd htrace.sh && build/build.sh
+    #docker build --rm -t htrace.sh -f Dockerfile .
 
     # Run htrace.sh tests against the nominated web site
-    # docker run --rm -t --name htrace.sh htrace.sh -d $WEBSITE -s -h
+    docker run --rm -t --name htrace.sh htrace.sh -u $WEBSITE -s -h #--testssl --observatory --ssllabs --mixed-content --nse --waf --dns --http2
   displayName: 'Run http/https security checks'
 
 - script: |
@@ -203,16 +208,21 @@ steps:
 
 # Publish Test Results
 # Publish Test Results to Azure Pipelines/TFS
+#- task: PublishTestResults@2
+#  inputs:
+#    testResultsFormat: 'xUnit' # Options: JUnit, NUnit, VSTest, xUnit
+#    testResultsFiles: '**/TEST-*.xml' 
+#    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+#    #mergeTestResults: false # Optional
+#    #testRunTitle: 'Integration' # Optional
+#    #buildPlatform: # Optional
+#    #buildConfiguration: # Optional
+#    #publishRunAttachments: true # Optional
 - task: PublishTestResults@2
+  condition: succeededOrFailed()
   inputs:
-    testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit
-    testResultsFiles: '**/TEST-*.xml' 
-    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
-    #mergeTestResults: false # Optional
-    #testRunTitle: 'Integration' # Optional
-    #buildPlatform: # Optional
-    #buildConfiguration: # Optional
-    #publishRunAttachments: true # Optional
+    testRunner: JUnit
+    testResultsFiles: '**/TEST-*.xml'
 
 # Copy Files
 # Copy files from source folder to target folder using match patterns (The match patterns will only match file paths, not folder paths)
