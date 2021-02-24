@@ -54,10 +54,10 @@ steps:
     --rm \
     -e SONAR_HOST_URL="https://sonarcloud.io" \
     -e SONAR_LOGIN="8725538bd2603c6990da57d9c53afe2d176fb844" \
-    -e SONAR_PROJECT_KEY="monch1962_hello-world-devops" \
-    -e SONAR_ORGANIZATION="monch1962-github" \
     -v ${pwd}:/usr/src \
-    sonarsource/sonar-scanner-cli
+    sonarsource/sonar-scanner-cli \
+    -Dsonar.projectKey=monch1962_hello-world-devops \
+    -Dsonar.organization=monch1962-github
   displayName: 'Run sonarcloud code quality tests'
     
 - script: |
