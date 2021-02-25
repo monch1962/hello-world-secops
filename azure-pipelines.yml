@@ -241,3 +241,9 @@ steps:
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: UI-test-screenshots
+    
+- task: PublishCodeCoverageResults@1
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    codeCoverageTool: cobertura
+    summaryFileLocation: '**/cobertura-coverage.xml'
