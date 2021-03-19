@@ -11,6 +11,14 @@ steps:
   inputs:
     versionSpec: '12.x'
   displayName: 'Install Node.js'
+  
+- script: |
+    # Run shellcheck over azure-pipelines.yml
+    docker run -v $(pwd):/mnt koalaman/shellcheck -C azure-pipelines.yml
+    
+    # Don't fail if any problems found...
+    echo $?
+  displayName: 'shellcheck Azure pipeline file'
 
 - script: |
     # Install the app and all its dependencies
