@@ -1,7 +1,7 @@
 config:
   target: 'http://localhost:8080'
   phases:
-    - duration: 180
+    - duration: 120
       arrivalRate: 50
   ensure:
     p95: 10
