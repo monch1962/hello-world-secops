@@ -13,6 +13,10 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    sudo apt-get install uuid
+  displayName: 'Install a UUID generator'
+
+- script: |
     # Install cosign to allow you to sign & check container images. You'd probably want to pull it from a
     # known registry, but in this case we're going to build it from scratch
     #docker pull bitnami/cosign
