@@ -20,6 +20,7 @@ steps:
     cd cosign
     go install ./cmd/cosign
     cd ..
+    PATH=./cosign:$PATH
     #$(go env GOPATH)/bin/cosign
 
     # You'd probably want to use a password from some sort of secrets store, but this is just a demo so...
