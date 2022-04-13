@@ -61,7 +61,7 @@ steps:
     COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a git_commit=$(git rev-parse HEAD) ttl.sh/${IMAGE_NAME}:1h
 
     # Now verify the signed image against the public key
-    $(go env GOPATH)/bin/cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq '.[].optional'
+    $(go env GOPATH)/bin/cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq .
   displayName: 'Build & store container image to a registry, then sign the image'
 
   
