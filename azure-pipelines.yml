@@ -66,7 +66,7 @@ steps:
 
 - script: |
     docker run aquasec/trivy image ttl.sh/${IMAGE_NAME}:1h
-    COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a trivy_check=passed ttl.sh/${IMAGE_NAME}:1h
+    #COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a trivy_check=passed ttl.sh/${IMAGE_NAME}:1h
   displayName: 'Run Trivy check against container image'
   
 - script: |
@@ -81,29 +81,6 @@ steps:
     # node_modules/nyc/bin/nyc.js --reporter=lcov --reporter=text-lcov npm test
     #sudo apt-get update && sudo apt install default-jre default-jdk
 
-    # Download sonar-scanner
-    SONARCLOUDDIR=/tmp
-    #wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip -O $SONARCLOUDDIR/sonar.zip
-    #unzip $SONARCLOUDDIR/sonar.zip -d /tmp
-
-    # Print out some diagnostic info
-    #ls -al $SONARCLOUDDIR
-    #cat $SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties
-    #PATH=$SONARCLOUDDIR/sonar-scanner-3.2.0.1227-linux/bin:$PATH
-    #echo $PATH
-    #APP_DIR=$(pwd)
-    #ls -al
-    #sonar-scanner -h
-
-    # Run sonar-scanner
-    #sonar-scanner \
-    #-Dsonar.projectKey=monch1962_hello-world-devops \
-    #-Dsonar.organization=monch1962-github \
-    #-Dsonar.sources=. \
-    #-Dsonar.exclusions=node_modules/**,tests/**,coverage/** \
-    #-Dsonar.host.url=https://sonarcloud.io \
-    #-Dsonar.javascript.lcov.reportPaths=app/coverage/** \
-    #-Dsonar.login=8725538bd2603c6990da57d9c53afe2d176fb844
     docker run \
     --rm \
     -e SONAR_HOST_URL="https://sonarcloud.io" \
