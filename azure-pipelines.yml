@@ -28,7 +28,7 @@ steps:
 
     # Generate a key pair for cosign to use. 
     # This command will generate consign.pub (public key) & cosign.key (private key) files
-    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign generate-key-pair
+    COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign generate-key-pair
   displayName: 'Install & setup cosign'
 
 - script: |
@@ -54,7 +54,7 @@ steps:
     docker push ttl.sh/${IMAGE_NAME}:1h
 
     # Now sign the image we've just built with a timestamp & a git commit ID
-    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a build=$(date +"%F_%T.%6N") -a git_commit=$(git rev-parse HEAD) ttl.sh/${IMAGE_NAME}:1h
+    COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a build=$(date +"%F_%T.%6N") -a git_commit=$(git rev-parse HEAD) ttl.sh/${IMAGE_NAME}:1h
 
     # Now verify the signed image against the public key
     cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq '.[].optional'
@@ -65,7 +65,7 @@ steps:
     npm run unittests
 
     # If unit tests all pass, we sign the image with a permanent record to attest to this
-    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a unit_tests=passed ttl.sh/${IMAGE_NAME}:1h; fi
+    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a unit_tests=passed ttl.sh/${IMAGE_NAME}:1h; fi
   displayName: 'Run unit tests'
 
 - script: |
@@ -109,7 +109,7 @@ steps:
     -Dsonar.javascript.lcov.reportPaths=app/coverage/**
 
     # Once Sonar Scanner completes, sign the image with a permanent record to attest to this
-    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a code_quality=passed ttl.sh/${IMAGE_NAME}:1h; fi
+    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a code_quality=passed ttl.sh/${IMAGE_NAME}:1h; fi
 
   displayName: 'Run sonarcloud code quality tests'
 
@@ -131,7 +131,7 @@ steps:
     testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X,chrome:headless:emulation:device=Galaxy S5,chrome:headless:emulation:device=Pixel 2,chrome:headless:emulation:device=iPad" tests/ui/** --reporter xunit --screenshots . > TEST-uitests.xml
 
     # Once UI tests complete, sign the image with a permanent record to attest to this
-    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a ui_tests=passed ttl.sh/${IMAGE_NAME}:1h; fi
+    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a ui_tests=passed ttl.sh/${IMAGE_NAME}:1h; fi
 
     cat TEST-uitests.xml
 
@@ -156,7 +156,7 @@ steps:
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
 
     # API tests have passed, so sign the image with a permanent record to attest to this
-    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a api_tests=passed ttl.sh/${IMAGE_NAME}:1h
+    COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a api_tests=passed ttl.sh/${IMAGE_NAME}:1h
 
 
     # Don't need the app any more; kill it
@@ -193,7 +193,7 @@ steps:
     if [ $? -ne 0 ]; then kill $APP_PID && ./hoverctl stop && exit 1; fi
 
     # Integration tests have passed, so sign the image with a permanent record to attest to this
-    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a integration_tests=passed ttl.sh/${IMAGE_NAME}:1h
+    COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a integration_tests=passed ttl.sh/${IMAGE_NAME}:1h
 
 
     # Stop Hoverfly
@@ -217,7 +217,7 @@ steps:
     axe http://localhost:8080 --exit
 
     # Accessibility tests have passed, so sign the image with a permanent record to attest to this
-    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a accessibility_tests=passed ttl.sh/${IMAGE_NAME}:1h
+    COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a accessibility_tests=passed ttl.sh/${IMAGE_NAME}:1h
 
 
     # Kill the app
@@ -261,7 +261,7 @@ steps:
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
 
     # Performance tests have passed, so sign the image with a permanent record to attest to this
-    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a performance_tests=passed ttl.sh/${IMAGE_NAME}:1h
+    COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a performance_tests=passed ttl.sh/${IMAGE_NAME}:1h
 
     # Generate the Artillery test report
     #artillery report TEST-artillery.json
@@ -282,7 +282,7 @@ steps:
 
     # In this case we're just going to display them, but we could also write some logic to ensure all CI tasks have been
     # completed before deploying
-    cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq '.[].optional'
+    $(go env GOPATH)/bin/cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq '.[].optional'
   displayName: 'Display signatures for the container image'
 
 # Publish Test Results
