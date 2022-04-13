@@ -64,6 +64,10 @@ steps:
     $(go env GOPATH)/bin/cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq .
   displayName: 'Build & store container image to a registry, then sign the image'
 
+- script: |
+    docker run aquasec/trivy image ttl.sh/${IMAGE_NAME}:1h
+    COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign sign --key cosign.key -a trivy_check=passed ttl.sh/${IMAGE_NAME}:1h
+  displayName: 'Run Trivy check against container image'
   
 - script: |
     npm run unittests
