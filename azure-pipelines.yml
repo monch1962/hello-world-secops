@@ -11,7 +11,25 @@ steps:
   inputs:
     versionSpec: '12.x'
   displayName: 'Install Node.js'
-  
+
+- script: |
+    # Install cosign to allow you to sign & check container images. You'd probably want to pull it from a
+    # known registry, but in this case we're going to build it from scratch
+    #docker pull bitnami/cosign
+    git clone https://github.com/sigstore/cosign
+    cd cosign
+    go install ./cmd/cosign
+    cd ..
+    #$(go env GOPATH)/bin/cosign
+
+    # You'd probably want to use a password from some sort of secrets store, but this is just a demo so...
+    COSIGN_PASSWORD=abc123
+
+    # Generate a key pair for cosign to use. 
+    # This command will generate consign.pub (public key) & cosign.key (private key) files
+    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign generate-key-pair
+  displayName: 'Install & setup cosign'
+
 - script: |
     # Run shellcheck over azure-pipelines.yml
     docker run -v $(pwd):/mnt koalaman/shellcheck -C azure-pipelines.yml
@@ -24,9 +42,29 @@ steps:
     # Install the app and all its dependencies
     npm install
   displayName: 'npm install and build'
+
+- script: |
+    # Create a Docker container to hold the code & store it in a registry
+
+    # Normally you'd use a 'real' Docker registry, but for a demo we're just going to use an ephemeral image store &
+    # an ephemeral name for the image. The image in the registry is set to expire after 1 hour, which is fine for a demo
+    IMAGE_NAME=$(uuid)
+    docker build -t ttl.sh/${IMAGE_NAME}:1h .
+    docker push ttl.sh/${IMAGE_NAME}:1h
+
+    # Now sign the image we've just built with a timestamp & a git commit ID
+    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a build=$(date +"%F_%T.%6N") -a git_commit=$(git rev-parse HEAD) ttl.sh/${IMAGE_NAME}:1h
+
+    # Now verify the signed image against the public key
+    cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq '.[].optional'
+  displayName: 'Build & store container image to a registry, then sign the image'
+
   
 - script: |
     npm run unittests
+
+    # If unit tests all pass, we sign the image with a permanent record to attest to this
+    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a unit_tests=passed ttl.sh/${IMAGE_NAME}:1h; fi
   displayName: 'Run unit tests'
 
 - script: |
@@ -68,6 +106,10 @@ steps:
     -Dsonar.exclusions=node_modules/**,tests/**,coverage/** \
     -Dsonar.host.url=https://sonarcloud.io \
     -Dsonar.javascript.lcov.reportPaths=app/coverage/**
+
+    # Once Sonar Scanner completes, sign the image with a permanent record to attest to this
+    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a code_quality=passed ttl.sh/${IMAGE_NAME}:1h; fi
+
   displayName: 'Run sonarcloud code quality tests'
 
 - script: |
@@ -86,6 +128,9 @@ steps:
 
     # Run all available UI tests on multiple browsers, and save results in XUnit format
     testcafe "chrome:headless,firefox:headless,chrome:headless:emulation:device=iphone X,chrome:headless:emulation:device=Galaxy S5,chrome:headless:emulation:device=Pixel 2,chrome:headless:emulation:device=iPad" tests/ui/** --reporter xunit --screenshots . > TEST-uitests.xml
+
+    # Once UI tests complete, sign the image with a permanent record to attest to this
+    if [ $? -eq 0 ]; then COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a ui_tests=passed ttl.sh/${IMAGE_NAME}:1h; fi
 
     cat TEST-uitests.xml
 
@@ -108,6 +153,10 @@ steps:
 
     # If wilee fails with errors, kill the app instance and exit 1 so Devops can see the failure
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
+
+    # API tests have passed, so sign the image with a permanent record to attest to this
+    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a api_tests=passed ttl.sh/${IMAGE_NAME}:1h
+
 
     # Don't need the app any more; kill it
     kill $APP_PID
@@ -142,6 +191,10 @@ steps:
     npm run integrationtests
     if [ $? -ne 0 ]; then kill $APP_PID && ./hoverctl stop && exit 1; fi
 
+    # Integration tests have passed, so sign the image with a permanent record to attest to this
+    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a integration_tests=passed ttl.sh/${IMAGE_NAME}:1h
+
+
     # Stop Hoverfly
     ./hoverctl stop
 
@@ -161,6 +214,10 @@ steps:
     # Run the Axe accessibility tests (if there's more pages to test, just give it a comma-separated list of URLs)
     # Appending --exit will cause the tests to exit 1 if problems are found. This could be handy but I'm not using it yet
     axe http://localhost:8080 --exit
+
+    # Accessibility tests have passed, so sign the image with a permanent record to attest to this
+    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a accessibility_tests=passed ttl.sh/${IMAGE_NAME}:1h
+
 
     # Kill the app
     kill $APP_PID
@@ -202,6 +259,9 @@ steps:
     # If test fails, exit 1 to fail this step in the pipeline
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
 
+    # Performance tests have passed, so sign the image with a permanent record to attest to this
+    COSIGN_PASSWORD=$COSIGN_PASSWORD cosign sign --key cosign.key -a performance_tests=passed ttl.sh/${IMAGE_NAME}:1h
+
     # Generate the Artillery test report
     #artillery report TEST-artillery.json
 
@@ -213,6 +273,16 @@ steps:
     # Kill the app
     kill $APP_PID
   displayName: 'Run Artillery performance test'
+
+- script: |
+    # All tests have now passed, so the next step would normally be to deploy the container
+    # Before deploying the container, all these immutable signatures we've saved during CI can be validated to ensure
+    # the image we're about to deploy hasn't been changed
+
+    # In this case we're just going to display them, but we could also write some logic to ensure all CI tasks have been
+    # completed before deploying
+    cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq '.[].optional'
+  displayName: 'Display signatures for the container image'
 
 # Publish Test Results
 # Publish Test Results to Azure Pipelines/TFS
