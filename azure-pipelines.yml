@@ -32,6 +32,7 @@ steps:
 
     # Generate a key pair for cosign to use. 
     # This command will generate consign.pub (public key) & cosign.key (private key) files
+    # For a real project, you'd definitely want to move the private key into some sort of secrets store, but this is just a demo...
     COSIGN_PASSWORD=$COSIGN_PASSWORD $(go env GOPATH)/bin/cosign generate-key-pair
   displayName: 'Install & setup cosign'
 
@@ -267,8 +268,8 @@ steps:
     # Before deploying the container, all these immutable signatures we've saved during CI can be validated to ensure
     # the image we're about to deploy hasn't been changed
 
-    # In this case we're just going to display them, but we could also write some logic to ensure all CI tasks have been
-    # completed before deploying
+    # In this case we're just going to display the signatures, but we could also write some logic to ensure all CI tasks have been
+    # completed (by checking the tags that should have been created) before deploying
     $(go env GOPATH)/bin/cosign verify --key cosign.pub ttl.sh/${IMAGE_NAME}:1h | jq '.[].optional'
   displayName: 'Display signatures for the container image'
 
