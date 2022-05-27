@@ -23,13 +23,13 @@ This is a trivial NodeJS app, with a few unit tests, a few integration tests, a 
 
 The focus is on using free or open source tools at every step, to demonstrate just how much coverage can be provided in many different areas via CI at minimal cost. Some of the tools used:
 - cosign (used for signing / tagging / verifying build artifacts)
-- trivy (vulnerability scanning for Docker containers)
+- trivy (vulnerability & secrets scanning for Docker container images, configuration files & git repos)
 - SonarCloud (code quality checks)
 - hadolint (check for best practices in Dockerfiles)
 - shellcheck (check for best practices/vulnerabilities in shell scripts)
 - testcafe (UI automation)
 - wilee (API automation)
-- hoverfly (stubbing)
+- hoverfly (http/https stubbing)
 - axe-core (accessibility tracing)
 - htrace.sh (http/https profiling, problem identification & troubleshooting)
 - artillery (load testing)
