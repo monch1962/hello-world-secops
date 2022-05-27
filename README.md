@@ -19,7 +19,23 @@ Trivial app to explore workflow &amp; CI pipelining in different CI frameworks
 ![Build Status](https://sonarcloud.io/api/project_badges/measure?project=monch1962_hello-world-devops&metric=vulnerabilities)
 
 ## Intention
-This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs and a few performance tests. It's also linked to https://sonarcloud.io for code quality checks. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks
+This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs, a few performance tests and more. It's also linked to https://sonarcloud.io for code quality checks. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks.
+
+The focus is on using free or open source tools at every step, to demonstrate just how much coverage can be provided in many different areas via CI at minimal cost. Some of the tools used:
+- cosign (used for signing / tagging / verifying build artifacts)
+- trivy (vulnerability scanning for Docker containers)
+- SonarCloud (code quality checks)
+- hadolint (check for best practices in Dockerfiles)
+- shellcheck (check for best practices/vulnerabilities in shell scripts)
+- testcafe (UI automation)
+- wilee (API automation)
+- hoverfly (stubbing)
+- axe-core (accessibility tracing)
+- htrace.sh (http/https profiling, problem identification & troubleshooting)
+- artillery (load testing)
+Note that this set of tools is constantly changing as I find different tools and techniques. The focus shouldn't be on the specific tools being used in this repo; instead focus on the test & quality coverage that can be achieved via testing in pipelines
+
+
 
 ## Architecture
 
