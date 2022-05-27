@@ -22,7 +22,7 @@ Trivial app to explore workflow &amp; CI pipelining in different CI frameworks
 This is a trivial NodeJS app, with a few unit tests, a few integration tests, a few PACTs, a few performance tests and more. It's also linked to https://sonarcloud.io for code quality checks. Intended use case is to discover and document how to build/test/deploy this app within different CI frameworks.
 
 The focus is on using free or open source tools at every step, to demonstrate just how much coverage can be provided in many different areas via CI at minimal cost. Some of the tools used:
-- cosign (used for signing / tagging / verifying build artifacts)
+- cosign (used for signing / tagging / verifying build artifacts; software supply chain security)
 - trivy (vulnerability & secrets scanning for Docker container images, configuration files & git repos)
 - SonarCloud (code quality checks)
 - hadolint (check for best practices in Dockerfiles)
