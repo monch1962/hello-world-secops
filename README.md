@@ -33,7 +33,8 @@ The focus is on using free or open source tools at every step, to demonstrate ju
 - axe-core (accessibility tracing)
 - htrace.sh (http/https profiling, problem identification & troubleshooting)
 - artillery (load testing)
-Note that this set of tools is constantly changing as I find different tools and techniques. The focus shouldn't be on the specific tools being used in this repo; instead focus on the test & quality coverage that can be achieved via testing in pipelines
+
+Note that this set of tools is constantly evolving as I assess different tools and techniques. The focus shouldn't be on the specific tools being used within this repo; instead focus on the test & quality coverage that can be achieved via testing in pipelines
 
 
 
