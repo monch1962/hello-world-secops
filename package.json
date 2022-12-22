@@ -31,7 +31,7 @@
     "testcafe-reporter-xunit": "^2.1.0"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.27.2",
     "chai-http": "^4.2.1",
     "cover": "^0.2.9",
     "express": "^4.16.4",
