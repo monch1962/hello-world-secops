@@ -35,7 +35,7 @@
     "chai-http": "^4.2.1",
     "cover": "^0.2.9",
     "express": "^4.16.4",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "request-promise": "^4.2.2"
   }
 }
