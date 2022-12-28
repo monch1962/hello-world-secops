@@ -9,11 +9,23 @@ In a production environment, you'd normally want to:
 - store those Docker images in a private registry, where they can be version controlled by your organisation
 - pull those images from your own private registry each time you want to run them
 
+## Utilities
+
+### jq
+
+`$ docker pull stedolan/jq`
+
+Here's an example of how to use it
+
+`$ cat package.json | docker run --rm -i stedolan/jq '.'`
+
 ## Software supply chain security
 
 ### cosign
 
 `$ docker pull bitnami/cosign`
+
+`$ docker run --rm --name cosign bitnami/cosign:latest --help`
 
 ## Secrets scanning
 
@@ -64,7 +76,7 @@ In a production environment, you'd normally want to:
 
 `$ docker pull koalaman/shellcheck`
 
-`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -C *.sh`
+`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -f json1 -C *.sh`
 
 ### hadolint
 
