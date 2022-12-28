@@ -70,18 +70,26 @@ In a production environment, you'd normally want to:
 
 `$ docker pull owasp/zap2docker-stable`
 
-As you're running ZAP inside a container, and using it to test an app running inside another container, you'll need to use a Docker network
+As you're running ZAP inside a container, and using it to test an app running inside another container, you'll need to set up a Docker network and run both containers inside that network
 
 `$ docker network create zapnet`
 
 Build the app to be tested inside a container image
 
-`$ docker build -t myapp -f .`
+`$ docker build -t myapp .`
 
 Start the app
 
-`$ docker run --rm -i --net zapnet myapp`
+`$ docker run --rm -i -p 8080:8080 --net zapnet myapp:latest &`
+
+Create the directory structure to capture the results of the ZAP scan, and make it world-writable
+
+`$ mkdir results && chmod 777 results`
+
+We need to derive the IP address of the running app, which can be done using `$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1)`
 
 Now run a ZAP baseline test against the app
 
-`$ docker run -v $(pwd):/results --net zapnet -t owasp/zap2docker-stable zap-baseline.py -t https://myapp -j /results/zap-results.json`
+`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-baseline.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-report.json`
+
+Results of the scan should now be in JSON format under `./results/zap-report.json`. You can parse out those results using `cat results/zap-report.json | jq '.site[0].alerts'`
