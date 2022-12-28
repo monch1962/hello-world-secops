@@ -27,7 +27,7 @@
     "mockery": "^2.1.0",
     "nyc": "^13.3.0",
     "supertest": "^3.3.0",
-    "testcafe": "^0.23.3",
+    "testcafe": "^2.1.0",
     "testcafe-reporter-xunit": "^2.1.0"
   },
   "dependencies": {
