@@ -22,19 +22,19 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "guid-typescript": "^1.0.9",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "mocha-junit-reporter": "^1.18.0",
     "mockery": "^2.1.0",
     "nyc": "^13.3.0",
     "supertest": "^3.3.0",
-    "testcafe": "^0.23.3",
+    "testcafe": "^2.1.0",
     "testcafe-reporter-xunit": "^2.1.0"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.2",
     "chai-http": "^4.2.1",
     "cover": "^0.2.9",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   }
