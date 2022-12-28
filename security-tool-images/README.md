@@ -21,8 +21,6 @@ In a production environment, you'd normally want to:
 
 `$ docker pull ghcr.io/zricethezav/gitleaks:latest`
 
-`$ docker run -v ${path_to_host_folder_to_scan}:/path zricethezav/gitleaks:latest [COMMAND] --source="/path" [OPTIONS]`
-
 `$ docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest detect --source="/path"`
 
 ## Policies
@@ -31,11 +29,21 @@ In a production environment, you'd normally want to:
 
 `$ docker pull openpolicyagent/opa`
 
+`$ docker run --rm -v $(pwd)/policy:/policy openpolicyagent/opa test /policy --format json`
+
 ### conftest
 
 `$ docker pull openpolicyagent/conftest`
 
 `$ docker run --rm -v $(pwd)/policy:/policy -i openpolicyagent/conftest test -p /policy`
+
+## 3rd party FOSS licence scan
+
+### scancode-toolkit
+
+`$ git clone https://github.com/nexB/scancode-toolkit && cd scancode-toolkit && docker build --tag scancode-toolkit --tag scancode-toolkit:$(git describe --tags) . && cd .. && rm -rf scancode-toolkit`
+
+`$ docker run --rm -v $(pwd):/project scancode-toolkit:latest -n 10 --ignore "*.js,*.json,*.md,*.java,*.ts,*.go,*.exe,*.dll,*.jpg,*.gif,*.mp*,*.php,*.py,*.c,*.h,*.gz,*.zip,*.toml,*.yaml,*.cfg,*.yml,*.lib,*.xml,*.ini,*.tgz,*.pom" -clipeu --json-pp /project/results/scancode-toolkit-result.json .`
 
 ## SAST 
 
@@ -56,7 +64,7 @@ In a production environment, you'd normally want to:
 
 `$ docker pull koalaman/shellcheck`
 
-`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck *.sh`
+`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -C *.sh`
 
 ### hadolint
 
