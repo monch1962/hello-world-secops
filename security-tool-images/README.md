@@ -2,21 +2,18 @@
 
 This directory contains Dockerfiles to allow you to build images for the security scanning tools used in this repo
 
-## Hadolint
+## Overview
 
-`$ docker pull hadolint/hadolint`
+In a production environment, you'd normally want to:
+- build Docker images for each security tool
+- store those Docker images in a private registry, where they can be version controlled by your organisation
+- pull those images from your own private registry each time you want to run them
 
-`$ docker run --rm -i hadolint/hadolint < Dockerfile`
+## Software supply chain security
 
-## Cosign
+### cosign
 
 `$ docker pull bitnami/cosign`
-
-## Shellcheck
-
-`$ docker pull koalaman/shellcheck`
-
-`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck *.sh`
 
 ## Secrets scanning
 
@@ -41,15 +38,50 @@ This directory contains Dockerfiles to allow you to build images for the securit
 `$ docker run --rm -v $(pwd)/policy:/policy -i openpolicyagent/conftest test -p /policy`
 
 ## SAST 
+
 ### sonarcloud
 
 `$ docker pull sonarsource/sonarcloud-scan`
 
 `$ docker pull sonarsource/sonar-scanner-cli`
 
-```$ docker run \\
+`$ docker run \\
     --rm \\
     -e SONAR_HOST_URL="<http://$>{SONARQUBE_URL}" \\
     -e SONAR_LOGIN="myAuthenticationToken" \\
     -v "${YOUR_REPO}:/usr/src" \\
-    sonarsource/sonar-scanner-cli```
+    sonarsource/sonar-scanner-cli`
+
+### Shellcheck
+
+`$ docker pull koalaman/shellcheck`
+
+`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck *.sh`
+
+### hadolint
+
+`$ docker pull hadolint/hadolint`
+
+`$ docker run --rm -i hadolint/hadolint < Dockerfile`
+
+## DAST
+
+### ZAP
+
+`$ docker pull owasp/zap2docker-stable`
+
+As you're running ZAP inside a container, and using it to test an app running inside another container, you'll need to use a Docker network
+
+`$ docker network create zapnet`
+
+Build the app to be tested inside a container image
+
+`$ docker build -t myapp -f .`
+
+Start the app
+
+`$ docker run --rm -i --net zapnet myapp`
+
+Now run a ZAP baseline test against the app
+
+`$ docker run -v $(pwd):/results --net zapnet -t owasp/zap2docker-stable zap-baseline.py -t https://myapp -j /results/zap-results.json`
