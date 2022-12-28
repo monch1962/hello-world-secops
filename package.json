@@ -1,7 +1,7 @@
 {
-  "name": "hello-world-devops",
+  "name": "hello-world-secops",
   "version": "0.0.1",
-  "description": "Trivial application designed to understand Azure DevOps workflows",
+  "description": "Trivial application designed to understand Azure secops workflows",
   "main": "helloworld.js",
   "scripts": {
     "test": "mocha tests/unit/*.js && mocha tests/integration/*.js && testcafe \"chrome:headless\" tests/ui/helloworld.ts",

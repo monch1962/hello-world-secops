@@ -1,7 +1,7 @@
 # Node.js
 # Build a general Node.js project with npm.
 # Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+# https://docs.microsoft.com/azure/secops/pipelines/languages/javascript
 
 pool:
   vmImage: 'Ubuntu 20.04'
@@ -90,7 +90,7 @@ steps:
     -e SONAR_LOGIN="8725538bd2603c6990da57d9c53afe2d176fb844" \
     -v $(pwd):/usr/src \
     sonarsource/sonar-scanner-cli \
-    -Dsonar.projectKey=monch1962_hello-world-devops \
+    -Dsonar.projectKey=monch1962_hello-world-secops \
     -Dsonar.organization=monch1962-github \
     -Dsonar.exclusions=node_modules/**,tests/**,coverage/** \
     -Dsonar.host.url=https://sonarcloud.io \
@@ -140,7 +140,7 @@ steps:
     # Run all API tests in test/api/*.wilee.json
     APP=http://localhost:8080 TESTCASES=tests/api/*.wilee.json ./wilee
 
-    # If wilee fails with errors, kill the app instance and exit 1 so Devops can see the failure
+    # If wilee fails with errors, kill the app instance and exit 1 so secops can see the failure
     if [ $? -ne 0 ]; then kill $APP_PID && exit 1; fi
 
     # API tests have passed, so sign the image with a permanent record to attest to this
@@ -155,7 +155,7 @@ steps:
     echo $TESTRESULTS | jq '.'
     echo $TESTRESULTS | jq 'del(.request, .expect, .actual)'
 
-    # If there's any failed test cases, then exit 1 so Devops can see the failure
+    # If there's any failed test cases, then exit 1 so secops can see the failure
     FAILED_TESTS=$(echo $TESTRESULTS | jq '.pass_fail' | grep fail | wc -l)
     if [ $FAILED_TESTS -gt 0 ]; then echo $FAILED_TESTS "API tests failed" && exit 1; fi
   displayName: 'Run wilee API tests'
