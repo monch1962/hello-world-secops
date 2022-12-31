@@ -45,6 +45,8 @@ Refer to https://github.com/microsoft/sbom-tool/blob/main/docs/setting-up-ado-pi
 
 ### OSV-scanner
 
+Very good summary of this tool is at https://anmalkov.com/blog/how-to-use-google-osv-scanner
+
 OSV-scanner can be used to examine lockfiles created for many different languages. The list of supported lockfile formats is maintained at https://github.com/google/osv-scanner#input-a-lockfile
 
 OSV-scanner is built and maintained by Google at https://github.com/google/osv-scanner. For some reason there is no standard Docker image maintained by Google; however this one is built directly from Google's Dockerfile at https://github.com/google/osv-scanner/blob/main/Dockerfile every several days so is the next best thing...
