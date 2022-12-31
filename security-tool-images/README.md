@@ -9,11 +9,15 @@ In a production environment, you'd normally want to:
 - store those Docker images in a private registry, where they can be version controlled by your organisation
 - pull those images from your own private registry each time you want to run them
 
-Instructions below describe how to build the Docker image, and run the built image within CI/CD. You should adapt these instructions to include storing the Docker image in your own private registry, then running it from that registry, rather than running directly from a Dockerfile stored on the Internet
+Instructions below describe how to build the Docker image, and run the built image within CI/CD. You should adapt these instructions to include storing the Docker image in your own private registry, then running it from that registry, rather than running directly from a Dockerfile stored on the Internet.
+
+One possible way to do this is to create e.g. GCP Cloud Run jobs to build each Docker image from the instructions below on a regular basis, then push it to your registry, then check the built images for problems before starting to use them against your own codebase. Details of how to do this are beyond the scope of this article (for now...)
 
 ## Utilities
 
 ### jq
+
+jq is pretty much the industry standard tool for processing JSON files. Where possible, the tools described below are configured to emit their results as JSON; this means you can use jq to examine the output from each tool, then automate how any problems are handled within the CI/CD pipeline.
 
 #### Build Docker image
 
@@ -29,6 +33,11 @@ Here's an example of how to use it
 ## Software supply chain security
 
 ### cosign
+
+cosign is a tool for signing, tagging and verifying Docker images. Generally speaking, within CI/CD you should:
+- sign an image as soon as it has been created, using a public/private key pair that you control and which is secured appropriately
+- as each CI check is run, tag the signed image as an attestation that the check has completed successfully. Where appropriate, you can use different sets of public/private key pairs that are controlled by the various teams responsible for the execution of each check
+- as an image progresses through each step of CI & CD, the signed image can be checked to ensure that all previous CI checks have completed successfully before the next CI/CD step is executed. This allows you to enforce controls around sequencing CI checks, ensuring that only images that have successfully passed an appropriate set of checks are deployed to each non-prod and prod environment, and provides an audit trail of test coverage that can be referred to later
 
 #### Build Docker image
 
@@ -58,7 +67,7 @@ Refer to https://github.com/microsoft/sbom-tool/blob/main/docs/setting-up-ado-pi
 
 Very good summary of this tool is at https://anmalkov.com/blog/how-to-use-google-osv-scanner
 
-OSV-scanner can be used to examine lockfiles created for many different languages. The list of supported lockfile formats is maintained at https://github.com/google/osv-scanner#input-a-lockfile
+OSV-scanner can be used to examine lockfiles created for many different languages, and search for vulnerabilies in packages described in those lockfiles. The list of supported lockfile formats is maintained at https://github.com/google/osv-scanner#input-a-lockfile
 
 #### Build Docker image
 
