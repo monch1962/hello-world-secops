@@ -9,11 +9,18 @@ In a production environment, you'd normally want to:
 - store those Docker images in a private registry, where they can be version controlled by your organisation
 - pull those images from your own private registry each time you want to run them
 
+Instructions below describe how to build the Docker image, and run the built image within CI/CD. You should adapt these instructions to include storing the Docker image in your own private registry, then running it from that registry, rather than running directly from a Dockerfile stored on the Internet
+
 ## Utilities
 
 ### jq
 
+#### Build Docker image
+
 `$ docker pull stedolan/jq`
+
+
+#### Run within CI/CD
 
 Here's an example of how to use it
 
@@ -23,7 +30,11 @@ Here's an example of how to use it
 
 ### cosign
 
+#### Build Docker image
+
 `$ docker pull bitnami/cosign`
+
+#### Run within CI/CD
 
 `$ docker run --rm --name cosign bitnami/cosign:latest --help`
 
@@ -37,7 +48,7 @@ Note that you'll first need to install the DOTNET SDK from https://dotnet.micros
 
 `$ git clone https://github.com/microsoft/sbom-tool && cd sbom-tool/ && docker build -t sbom-tool . && cd .. && rm -rf sbom-tool`
 
-#### Run
+#### Run within CI/CD
 
 Refer to https://github.com/microsoft/sbom-tool/blob/main/docs/setting-up-ado-pipelines.md
 
@@ -49,9 +60,13 @@ Very good summary of this tool is at https://anmalkov.com/blog/how-to-use-google
 
 OSV-scanner can be used to examine lockfiles created for many different languages. The list of supported lockfile formats is maintained at https://github.com/google/osv-scanner#input-a-lockfile
 
+#### Build Docker image
+
 OSV-scanner is built and maintained by Google at https://github.com/google/osv-scanner. For some reason there is no standard Docker image maintained by Google; however this one is built directly from Google's Dockerfile at https://github.com/google/osv-scanner/blob/main/Dockerfile every several days so is the next best thing...
 
 `$ docker pull anmalkov/osv-scanner`
+
+#### Run within CI/CD
 
 To scan an SBOM file
 
@@ -67,7 +82,11 @@ To scan lockfiles for many different languages
 
 ### gitleaks
 
+#### Build Docker image
+
 `$ docker pull ghcr.io/zricethezav/gitleaks:latest`
+
+#### Run within CI/CD
 
 `$ docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest detect --source="/path"`
 
@@ -75,13 +94,23 @@ To scan lockfiles for many different languages
 
 ### opa
 
+#### Build Docker image
+
 `$ docker pull openpolicyagent/opa`
+
+#### Run within CI/CD
+
+To execute your tests against your OPA policies
 
 `$ docker run --rm -v $(pwd)/policy:/policy openpolicyagent/opa test /policy --format json`
 
 ### conftest
 
+#### Build Docker image
+
 `$ docker pull openpolicyagent/conftest`
+
+#### Run within CI/CD
 
 `$ docker run --rm -v $(pwd)/policy:/policy -i openpolicyagent/conftest test -p /policy`
 
@@ -89,7 +118,13 @@ To scan lockfiles for many different languages
 
 ### scancode-toolkit
 
+#### Build Docker image
+
 `$ git clone https://github.com/nexB/scancode-toolkit && cd scancode-toolkit && docker build --tag scancode-toolkit --tag scancode-toolkit:$(git describe --tags) . && cd .. && rm -rf scancode-toolkit`
+
+#### Run within CI/CD
+
+Note that running this tool will generally require at least several _hours_ for a non-trivial code base. Given that, it makes sense to run it in an 'out of band' CI process e.g. overnight or over a weekend, rather than for every build
 
 `$ docker run --rm -v $(pwd):/project scancode-toolkit:latest -n 10 --ignore "*.js,*.json,*.md,*.java,*.ts,*.go,*.exe,*.dll,*.jpg,*.gif,*.mp*,*.php,*.py,*.c,*.h,*.gz,*.zip,*.toml,*.yaml,*.cfg,*.yml,*.lib,*.xml,*.ini,*.tgz,*.pom" -clipeu --json-pp /project/results/scancode-toolkit-result.json .`
 
@@ -110,13 +145,25 @@ To scan lockfiles for many different languages
 
 ### Shellcheck
 
+#### Build Docker image
+
 `$ docker pull koalaman/shellcheck`
+
+#### Run within CI/CD
+
+Assuming all shell scripts are named *.sh
 
 `$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -f json1 -C *.sh`
 
 ### hadolint
 
+#### Build Docker image
+
 `$ docker pull hadolint/hadolint`
+
+#### Run within CI/CD
+
+Assuming you want to check a Dockerfile in the current directory
 
 `$ docker run --rm -i hadolint/hadolint < Dockerfile`
 
@@ -124,7 +171,11 @@ To scan lockfiles for many different languages
 
 ### ZAP
 
+#### Build Docker image
+
 `$ docker pull owasp/zap2docker-stable`
+
+#### Run within CI/CD
 
 As you're running ZAP inside a container, and using it to test an app running inside another container, you'll need to set up a Docker network and run both containers inside that network
 
@@ -144,7 +195,7 @@ Create the directory structure to capture the results of the ZAP scan, and make 
 
 We need to derive the IP address of the running app, which can be done using `$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1)`
 
-Now run a ZAP baseline test against the app
+Now run a ZAP baseline test against the app. Note that by default a ZAP baseline test is designed to finish within 1 minute; this can be changed by changing the parameters of the baseline scan
 
 `$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-baseline.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-report.json`
 
