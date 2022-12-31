@@ -27,6 +27,40 @@ Here's an example of how to use it
 
 `$ docker run --rm --name cosign bitnami/cosign:latest --help`
 
+## Software Bill of Materials (SBOM)
+
+### sbom-tool
+
+#### Build Docker image
+
+Note that you'll first need to install the DOTNET SDK from https://dotnet.microsoft.com/en-us/download/dotnet/6.0 in order to build this tool as a Docker image
+
+`$ git clone https://github.com/microsoft/sbom-tool && cd sbom-tool/ && docker build -t sbom-tool . && cd .. && rm -rf sbom-tool`
+
+#### Run
+
+Refer to https://github.com/microsoft/sbom-tool/blob/main/docs/setting-up-ado-pipelines.md
+
+## 3rd party vulnerability scan
+
+### OSV-scanner
+
+OSV-scanner can be used to examine lockfiles created for many different languages. The list of supported lockfile formats is maintained at https://github.com/google/osv-scanner#input-a-lockfile
+
+OSV-scanner is built and maintained by Google at https://github.com/google/osv-scanner. For some reason there is no standard Docker image maintained by Google; however this one is built directly from Google's Dockerfile at https://github.com/google/osv-scanner/blob/main/Dockerfile every several days so is the next best thing...
+
+`$ docker pull anmalkov/osv-scanner`
+
+To scan an SBOM file
+
+`$ docker run -v /path/to/your/dir-with-sbom-file:/data anmalkov/osv-scanner --sbom=/data/sbom.json`
+
+To scan lockfiles for many different languages
+
+`$ docker run -v /path/to/your/dir-with-your-lock-files:/data anmalkov/osv-scanner --lockfile=/data/first-directory/package-lock.json --lockfile=/data/another-directory/Cargo.lock`
+
+`$ docker run -v $(pwd):/data anmalkov/osv-scanner --json --lockfile=/data/package-lock.json > results/osv-scanner-results.json`
+
 ## Secrets scanning
 
 ### gitleaks
