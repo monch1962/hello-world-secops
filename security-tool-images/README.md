@@ -26,7 +26,7 @@ jq is pretty much the industry standard tool for processing JSON files. Where po
 
 #### Run within CI/CD
 
-Here's an example of how to use it
+Here's an example of how to use it to pretty-print a `package.json` file. Use cases specific to other SecOps tools are documented below in the section for each tool
 
 `$ cat package.json | docker run --rm -i stedolan/jq '.'`
 
@@ -85,6 +85,10 @@ To scan lockfiles for many different languages
 
 `$ docker run -v /path/to/your/dir-with-your-lock-files:/data anmalkov/osv-scanner --lockfile=/data/first-directory/package-lock.json --lockfile=/data/another-directory/Cargo.lock`
 
+Assuming
+- the code you want to scan is in the current directory
+- the lockfile you want to scan is at `./package-lock.json`
+- you want to save your OSV-scanner results to `./results/osv-scanner-results.json`
 `$ docker run -v $(pwd):/data anmalkov/osv-scanner --json --lockfile=/data/package-lock.json > results/osv-scanner-results.json`
 
 ## Secrets scanning
@@ -97,7 +101,11 @@ To scan lockfiles for many different languages
 
 #### Run within CI/CD
 
-`$ docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest detect --source="/path"`
+Assuming
+- the code you want to scan is in the current directory
+- you want the results of your gitleaks scan saved in JSON format to `./results/gitleaks-results.json`
+
+`$ docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest -f json detect --source="/path" > results/gitleaks-results.json`
 
 ## Policies
 
@@ -160,9 +168,12 @@ Note that running this tool will generally require at least several _hours_ for 
 
 #### Run within CI/CD
 
-Assuming all shell scripts are named *.sh
+Assuming 
+- you want to scan shell scripts in the current directory
+- all shell scripts are named *.sh
+- you want the results of the shellcheck scan to be saved at `./results/shellcheck-results.json`
 
-`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -f json1 -C *.sh`
+`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -f json1 -C *.sh | jq '.' > results/shellcheck-results.json`
 
 ### hadolint
 
@@ -172,9 +183,12 @@ Assuming all shell scripts are named *.sh
 
 #### Run within CI/CD
 
-Assuming you want to check a Dockerfile in the current directory
+Assuming
+- you want to check a Dockerfile in the current directory, 
+- your hadolint config file is at `./hadolint.yaml`, 
+- you want the results of the hadolint scan to be saved at `./results/hadolint-results.json`
 
-`$ docker run --rm -i hadolint/hadolint < Dockerfile`
+`$ docker run --rm -i -v $(pwd)/.hadolint.yaml:/.config/hadolint.yaml hadolint/hadolint < Dockerfile | jq '.' > results/hadolint-results.json`
 
 ## DAST
 
