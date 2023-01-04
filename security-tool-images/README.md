@@ -296,3 +296,21 @@ Alternately, a full ZAP scan can be run against the app as follows
 In this case, we're forcing the full scan to terminate after a maximum of 60 minutes. By default, a ZAP full scan isn't time-limited and will run for as long as it takes to complete - if that's what you want, you can remove `-m 60` from the above command line as follows
 
 `$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-full-scan.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-full-scan-report.json`
+
+### htrace.sh
+
+#### Build Docker image
+
+`$ git clone https://github.com/trimstray/htrace.sh && cd htrace.sh && build/build.sh && cd .. && rm -rf htrace.sh`
+
+#### Run within CI/CD
+
+Assuming
+- the app you want to test is running in the `zapnet` Docker network on your local host (see the ZAP section above for how to set this up)
+- the app is accessible via TCP/8080
+
+`$ docker run --rm --net zapnet -it --name htrace.sh htrace.sh -u http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 > results/htrace.sh-output.txt`
+
+Note that this particular example will produce minimal output, as the sample app runs on http rather than https. If you want to hit a `https://nmap.org` as an example of a secured site to see what the output looks like, try this:
+
+`$ docker run --rm -it --name htrace.sh htrace.sh -u https://nmap.org -s -h`
