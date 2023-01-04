@@ -30,6 +30,20 @@ Here's an example of how to use it to pretty-print a `package.json` file. Use ca
 
 `$ cat package.json | docker run --rm -i stedolan/jq '.'`
 
+### UUID
+
+For testing, it's useful to be able to generate UUIDs on demand. While there's a ton of different ways to do this with bash, Python, Ruby, Powershell, this Docker image lets you create new UUIDs with minimal effort and no dependencies besides a working container runtime.
+
+#### Build Docker image
+
+`$ docker pull monch1962/uuid`
+
+#### Run within CI/CD
+
+To generate a UUID
+
+`$ docker run monch1962/uuid`
+
 ## Software supply chain security
 
 ### cosign
