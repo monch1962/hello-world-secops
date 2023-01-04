@@ -13,6 +13,8 @@ Instructions below describe how to build the Docker image, and run the built ima
 
 One possible way to do this is to create e.g. GCP Cloud Run jobs to build each Docker image from the instructions below on a regular basis, then push it to your registry, then check the built images for problems before starting to use them against your own codebase. Details of how to do this are beyond the scope of this article (for now...)
 
+---
+
 ## Utilities
 
 ### jq
@@ -43,6 +45,8 @@ For testing, it's useful to be able to generate UUIDs on demand. While there's a
 To generate a UUID
 
 `$ docker run monch1962/uuid`
+
+---
 
 ## Software supply chain security
 
@@ -75,6 +79,8 @@ To generate a key pair & store it locally under `./cosign-keys`
 
 `$ docker run --rm --name cosign bitnami/cosign:latest --help`
 
+---
+
 ## Software Bill of Materials (SBOM)
 
 ### sbom-tool
@@ -88,6 +94,8 @@ Note that you'll first need to install the DOTNET SDK from https://dotnet.micros
 #### Run within CI/CD
 
 Refer to https://github.com/microsoft/sbom-tool/blob/main/docs/setting-up-ado-pipelines.md
+
+---
 
 ## 3rd party vulnerability scan
 
@@ -120,6 +128,8 @@ Assuming
 
 `$ docker run -v $(pwd):/data anmalkov/osv-scanner --json --lockfile=/data/package-lock.json > results/osv-scanner-results.json`
 
+---
+
 ## Secrets scanning
 
 ### gitleaks
@@ -135,6 +145,8 @@ Assuming
 - you want the results of your gitleaks scan saved in JSON format to `./results/gitleaks-results.json`
 
 `$ docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest -f json detect --source="/path" > results/gitleaks-results.json`
+
+---
 
 ## Policies
 
@@ -160,6 +172,8 @@ To execute your tests against your OPA policies
 
 `$ docker run --rm -v $(pwd)/policy:/policy -i openpolicyagent/conftest test -p /policy`
 
+---
+
 ## 3rd party FOSS licence scan
 
 ### scancode-toolkit
@@ -173,6 +187,8 @@ To execute your tests against your OPA policies
 Note that running this tool will generally require at least several _hours_ to scan a non-trivial code base. Given that, it makes sense to run it in an 'out of band' CI process e.g. overnight or over a weekend, rather than for every build
 
 `$ docker run --rm -v $(pwd):/project scancode-toolkit:latest -n 10 --ignore "*.js,*.json,*.md,*.java,*.ts,*.go,*.exe,*.dll,*.jpg,*.gif,*.mp*,*.php,*.py,*.c,*.h,*.gz,*.zip,*.toml,*.yaml,*.cfg,*.yml,*.lib,*.xml,*.ini,*.tgz,*.pom" -clipeu --json-pp /project/results/scancode-toolkit-result.json .`
+
+---
 
 ## SAST 
 
@@ -227,6 +243,8 @@ Now if you want to highlight on results that are errors, you can use `jq`
 
 `$ cat results/hadolint-results.json | jq '.[] | select(.level=="error")'`
 
+---
+
 ## DAST
 
 ### ZAP
@@ -255,8 +273,22 @@ Create the directory structure to capture the results of the ZAP scan, and make 
 
 We need to derive the IP address of the running app, which can be done using `$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1)`
 
-Now run a ZAP baseline test against the app. Note that by default a ZAP baseline test is designed to finish within 1 minute; this can be changed by changing the parameters of the baseline scan
+Now run a ZAP baseline test against the app. 
 
-`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-baseline.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-report.json`
+`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-baseline.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-baseline-report.json`
 
-Results of the scan should now be in JSON format under `./results/zap-report.json`. You can parse out those results using `cat results/zap-report.json | jq '.site[0].alerts'`
+Note that by default a ZAP baseline test is designed to finish within 1 minute, which is fast enough for CI/CD but may not be sufficient time. This can be changed by changing the `-m` parameter of the baseline scan. The following line will run a baseline ZAP scan for a maximum of 10 minutes
+
+`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-baseline.py -m 10 -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-baseline-report.json`
+
+Results of the scan should now be in JSON format under `./results/zap-baseline-report.json`. You can parse out those results using `cat results/zap-baseline-report.json | jq '.site[0].alerts'`
+
+---
+
+Alternately, a full ZAP scan can be run against the app as follows
+
+`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-full-scan.py -m 60 -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-full-scan-report.json`
+
+In this case, we're forcing the full scan to terminate after a maximum of 60 minutes. By default, a ZAP full scan isn't time-limited and will run for as long as it takes to complete - if that's what you want, you can remove `-m 60` from the above command line as follows
+
+`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-full-scan.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-full-scan-report.json`
