@@ -271,6 +271,10 @@ Start the app
 
 `$ docker run --rm -i -p 8080:8080 --net zapnet myapp:latest &`
 
+Alternately you could start the WebGoat app, which has known problems that ZAP should be able to pick up
+
+`$ docker run -p 8080:8080 -p 9090:9090 -e TZ=Australia/Sydney --net zapnet webgoat/webgoat &`
+
 Create the directory structure to capture the results of the ZAP scan, and make it world-writable
 
 `$ mkdir results && chmod 777 results`
