@@ -249,6 +249,10 @@ Now if you want to highlight on results that are errors, you can use `jq`
 
 ### ZAP
 
+ZAP (Zed Attack Proxy) advertises itself as "The world's most widely used web attack scanner. Free and open source. Actively maintained by a dedicated international team of volunteers. A Github Top 1000 project"
+
+It's a very powerful DAST, with a load of capabilities that are documented in detail at https://zaproxy.org. This document only covers straightforward scripted use cases for ZAP, but there is scope to build on these further if necessary.
+
 #### Build Docker image
 
 `$ docker pull owasp/zap2docker-stable`
