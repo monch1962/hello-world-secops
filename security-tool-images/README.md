@@ -45,11 +45,11 @@ cosign is a tool for signing, tagging and verifying Docker images. Generally spe
 
 #### Generating a key pair
 
-You'll want to generate a different key pair for each role responsible for creating assertions for a built artifact. Each role should tag the artifact using their own private key; these signatures can then be checked using that role's public key
+You'll want to generate a unique key pair for each role/person responsible for creating assertions for a built artifact. Each role should tag the artifact using their own private key; these signatures can then be checked using that role's public key. Using unique key pairs for each role allows you to implement separation of concerns in your SecOps processes, by ensuring that each signature & attestation can be traced back to a specific role/person.
 
 To generate a key pair & store it locally under `./cosign-keys`
 
-`$ COSIGN_PASSWORD=abc123`
+`$ COSIGN_PASSWORD=$(./uuid.sh)`
 
 `$ mkdir cosign-keys`
 
@@ -190,6 +190,10 @@ Assuming
 
 `$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -f json1 -C *.sh | jq '.' > results/shellcheck-results.json`
 
+Now if you want to highlight only results that are errors, you can use `jq`
+
+`$ cat results/shellcheck-results.json |  jq '.comments[] | select(.level=="error")'`
+
 ### hadolint
 
 #### Build Docker image
@@ -204,6 +208,10 @@ Assuming
 - you want the results of the hadolint scan to be saved at `./results/hadolint-results.json`
 
 `$ docker run --rm -i -v $(pwd)/.hadolint.yaml:/.config/hadolint.yaml hadolint/hadolint < Dockerfile | jq '.' > results/hadolint-results.json`
+
+Now if you want to highlight on results that are errors, you can use `jq`
+
+`$ cat results/hadolint-results.json | jq '.[] | select(.level=="error")'`
 
 ## DAST
 
