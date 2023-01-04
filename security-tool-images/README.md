@@ -43,6 +43,20 @@ cosign is a tool for signing, tagging and verifying Docker images. Generally spe
 
 `$ docker pull bitnami/cosign`
 
+#### Generating a key pair
+
+You'll want to generate a different key pair for each role responsible for creating assertions for a built artifact. Each role should tag the artifact using their own private key; these signatures can then be checked using that role's public key
+
+To generate a key pair & store it locally under `./cosign-keys`
+
+`$ COSIGN_PASSWORD=abc123`
+
+`$ mkdir cosign-keys`
+
+`$ chmod 777 cosign-keys`
+
+`$ docker run --rm -e COSIGN_PASSWORD=$COSIGN_PASSWORD -v $(pwd)/cosign-keys:/cosign-keys --name cosign bitnami/cosign:latest generate-key-pair`
+
 #### Run within CI/CD
 
 `$ docker run --rm --name cosign bitnami/cosign:latest --help`
@@ -89,6 +103,7 @@ Assuming
 - the code you want to scan is in the current directory
 - the lockfile you want to scan is at `./package-lock.json`
 - you want to save your OSV-scanner results to `./results/osv-scanner-results.json`
+
 `$ docker run -v $(pwd):/data anmalkov/osv-scanner --json --lockfile=/data/package-lock.json > results/osv-scanner-results.json`
 
 ## Secrets scanning
@@ -141,7 +156,7 @@ To execute your tests against your OPA policies
 
 #### Run within CI/CD
 
-Note that running this tool will generally require at least several _hours_ for a non-trivial code base. Given that, it makes sense to run it in an 'out of band' CI process e.g. overnight or over a weekend, rather than for every build
+Note that running this tool will generally require at least several _hours_ to scan a non-trivial code base. Given that, it makes sense to run it in an 'out of band' CI process e.g. overnight or over a weekend, rather than for every build
 
 `$ docker run --rm -v $(pwd):/project scancode-toolkit:latest -n 10 --ignore "*.js,*.json,*.md,*.java,*.ts,*.go,*.exe,*.dll,*.jpg,*.gif,*.mp*,*.php,*.py,*.c,*.h,*.gz,*.zip,*.toml,*.yaml,*.cfg,*.yml,*.lib,*.xml,*.ini,*.tgz,*.pom" -clipeu --json-pp /project/results/scancode-toolkit-result.json .`
 
