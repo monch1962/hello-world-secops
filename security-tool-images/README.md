@@ -13,6 +13,8 @@ Instructions below describe how to build the Docker image, and run the built ima
 
 One possible way to do this is to create e.g. GCP Cloud Run jobs to build each Docker image from the instructions below on a regular basis, then push it to your registry, then check the built images for problems before starting to use them against your own codebase. Details of how to do this are beyond the scope of this article (for now...)
 
+---
+
 ## Utilities
 
 ### jq
@@ -26,9 +28,25 @@ jq is pretty much the industry standard tool for processing JSON files. Where po
 
 #### Run within CI/CD
 
-Here's an example of how to use it
+Here's an example of how to use it to pretty-print a `package.json` file. Use cases specific to other SecOps tools are documented below in the section for each tool
 
 `$ cat package.json | docker run --rm -i stedolan/jq '.'`
+
+### UUID
+
+For testing, it's useful to be able to generate UUIDs on demand. While there's a ton of different ways to do this with bash, Python, Ruby, Powershell, this Docker image lets you create new UUIDs with minimal effort and no dependencies besides a working container runtime.
+
+#### Build Docker image
+
+`$ docker pull monch1962/uuid`
+
+#### Run within CI/CD
+
+To generate a UUID
+
+`$ docker run monch1962/uuid`
+
+---
 
 ## Software supply chain security
 
@@ -43,9 +61,25 @@ cosign is a tool for signing, tagging and verifying Docker images. Generally spe
 
 `$ docker pull bitnami/cosign`
 
+#### Generating a key pair
+
+You'll want to generate a unique key pair for each role/person responsible for creating assertions for a built artifact. Each role should tag the artifact using their own private key; these signatures can then be checked using that role's public key. Using unique key pairs for each role allows you to implement separation of concerns in your SecOps processes, by ensuring that each signature & attestation can be traced back to a specific role/person.
+
+To generate a key pair & store it locally under `./cosign-keys`
+
+`$ COSIGN_PASSWORD=$(./uuid.sh)`
+
+`$ mkdir cosign-keys`
+
+`$ chmod 777 cosign-keys`
+
+`$ docker run --rm -e COSIGN_PASSWORD=$COSIGN_PASSWORD -v $(pwd)/cosign-keys:/cosign-keys --name cosign bitnami/cosign:latest generate-key-pair`
+
 #### Run within CI/CD
 
 `$ docker run --rm --name cosign bitnami/cosign:latest --help`
+
+---
 
 ## Software Bill of Materials (SBOM)
 
@@ -60,6 +94,8 @@ Note that you'll first need to install the DOTNET SDK from https://dotnet.micros
 #### Run within CI/CD
 
 Refer to https://github.com/microsoft/sbom-tool/blob/main/docs/setting-up-ado-pipelines.md
+
+---
 
 ## 3rd party vulnerability scan
 
@@ -85,7 +121,14 @@ To scan lockfiles for many different languages
 
 `$ docker run -v /path/to/your/dir-with-your-lock-files:/data anmalkov/osv-scanner --lockfile=/data/first-directory/package-lock.json --lockfile=/data/another-directory/Cargo.lock`
 
+Assuming
+- the code you want to scan is in the current directory
+- the lockfile you want to scan is at `./package-lock.json`
+- you want to save your OSV-scanner results to `./results/osv-scanner-results.json`
+
 `$ docker run -v $(pwd):/data anmalkov/osv-scanner --json --lockfile=/data/package-lock.json > results/osv-scanner-results.json`
+
+---
 
 ## Secrets scanning
 
@@ -97,7 +140,13 @@ To scan lockfiles for many different languages
 
 #### Run within CI/CD
 
-`$ docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest detect --source="/path"`
+Assuming
+- the code you want to scan is in the current directory
+- you want the results of your gitleaks scan saved in JSON format to `./results/gitleaks-results.json`
+
+`$ docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest -f json detect --source="/path" > results/gitleaks-results.json`
+
+---
 
 ## Policies
 
@@ -123,6 +172,8 @@ To execute your tests against your OPA policies
 
 `$ docker run --rm -v $(pwd)/policy:/policy -i openpolicyagent/conftest test -p /policy`
 
+---
+
 ## 3rd party FOSS licence scan
 
 ### scancode-toolkit
@@ -133,9 +184,11 @@ To execute your tests against your OPA policies
 
 #### Run within CI/CD
 
-Note that running this tool will generally require at least several _hours_ for a non-trivial code base. Given that, it makes sense to run it in an 'out of band' CI process e.g. overnight or over a weekend, rather than for every build
+Note that running this tool will generally require at least several _hours_ to scan a non-trivial code base. Given that, it makes sense to run it in an 'out of band' CI process e.g. overnight or over a weekend, rather than for every build
 
 `$ docker run --rm -v $(pwd):/project scancode-toolkit:latest -n 10 --ignore "*.js,*.json,*.md,*.java,*.ts,*.go,*.exe,*.dll,*.jpg,*.gif,*.mp*,*.php,*.py,*.c,*.h,*.gz,*.zip,*.toml,*.yaml,*.cfg,*.yml,*.lib,*.xml,*.ini,*.tgz,*.pom" -clipeu --json-pp /project/results/scancode-toolkit-result.json .`
+
+---
 
 ## SAST 
 
@@ -160,9 +213,16 @@ Note that running this tool will generally require at least several _hours_ for 
 
 #### Run within CI/CD
 
-Assuming all shell scripts are named *.sh
+Assuming 
+- you want to scan shell scripts in the current directory
+- all shell scripts are named *.sh
+- you want the results of the shellcheck scan to be saved at `./results/shellcheck-results.json`
 
-`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -f json1 -C *.sh`
+`$ docker run --rm -v $(pwd):/mnt -i koalaman/shellcheck -f json1 -C *.sh | jq '.' > results/shellcheck-results.json`
+
+Now if you want to highlight only results that are errors, you can use `jq`
+
+`$ cat results/shellcheck-results.json |  jq '.comments[] | select(.level=="error")'`
 
 ### hadolint
 
@@ -172,13 +232,26 @@ Assuming all shell scripts are named *.sh
 
 #### Run within CI/CD
 
-Assuming you want to check a Dockerfile in the current directory
+Assuming
+- you want to check a Dockerfile in the current directory, 
+- your hadolint config file is at `./hadolint.yaml`, 
+- you want the results of the hadolint scan to be saved at `./results/hadolint-results.json`
 
-`$ docker run --rm -i hadolint/hadolint < Dockerfile`
+`$ docker run --rm -i -v $(pwd)/.hadolint.yaml:/.config/hadolint.yaml hadolint/hadolint < Dockerfile | jq '.' > results/hadolint-results.json`
+
+Now if you want to highlight on results that are errors, you can use `jq`
+
+`$ cat results/hadolint-results.json | jq '.[] | select(.level=="error")'`
+
+---
 
 ## DAST
 
 ### ZAP
+
+ZAP (Zed Attack Proxy) advertises itself as "The world's most widely used web attack scanner. Free and open source. Actively maintained by a dedicated international team of volunteers. A Github Top 1000 project"
+
+It's a very powerful DAST, with a load of capabilities that are documented in detail at https://zaproxy.org. This document only covers straightforward scripted use cases for ZAP, but there is scope to build on these further if necessary.
 
 #### Build Docker image
 
@@ -197,6 +270,10 @@ Build the app to be tested inside a container image
 Start the app
 
 `$ docker run --rm -i -p 8080:8080 --net zapnet myapp:latest &`
+
+Alternately you could start the WebGoat app, which has known problems that ZAP should be able to pick up
+
+`$ docker run -p 8080:8080 -p 9090:9090 -e TZ=Australia/Sydney --net zapnet webgoat/webgoat &`
 
 Create the directory structure to capture the results of the ZAP scan, and make it world-writable
 
