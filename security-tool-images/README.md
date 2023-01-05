@@ -204,8 +204,51 @@ Create the directory structure to capture the results of the ZAP scan, and make 
 
 We need to derive the IP address of the running app, which can be done using `$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1)`
 
-Now run a ZAP baseline test against the app. Note that by default a ZAP baseline test is designed to finish within 1 minute; this can be changed by changing the parameters of the baseline scan
+Now run a 1-minute ZAP baseline test against the app. Note that by default a ZAP baseline test is designed to finish within 1 minute; this can be changed by changing the parameters of the baseline scan
 
-`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-baseline.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-report.json`
+`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-baseline.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-baseline-report.json`
 
-Results of the scan should now be in JSON format under `./results/zap-report.json`. You can parse out those results using `cat results/zap-report.json | jq '.site[0].alerts'`
+Results of the scan should now be in JSON format under `./results/zap-baseline-report.json`. You can parse out those results using `cat results/zap-report.json | jq '.site[0].alerts'`
+
+To extend the maximum time for running the ZAP baseline test to say 10 minutes, use the `-m` parameter
+
+`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-baseline.py -m 10 -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-baseline-report.json`
+
+To run a full ZAP scan,
+
+`$ docker run --rm -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable zap-full-scan.py -t http://$(ip -f inet -o addr show docker0 | awk '{print $4}' | cut -d '/' -f 1):8080 -J zap-full-scan-report.json`
+
+---
+
+#### Scanning a "real" application with ZAP
+
+Now let's walk through the process of doing an active scan of a pseudo-real app, WebGoat
+
+`$ docker pull webgoat/goatandwolf`
+
+As you're running ZAP inside a container, and using it to test an app running inside another container, you'll need to set up a Docker network and run both containers inside that network
+
+`$ docker network create zapnet`
+
+Then start WebGoat running in a Docker container, in Docker's `zapnet` network. Note that we're exposing its ports at TCP/8081 and TCP/9091, as by default the ZAP Desktop uses TCP/8080 as a proxy
+
+`$ docker run --rm --net zapnet --name goatandwolf -p 8081:8080 -p 9091:9090 -d webgoat/goatandwolf:latest`
+
+Next step is to use the ZAP Desktop to perform a *manual* scan of the app. This should include:
+- run an automated scan
+- create a manual scan, including logging in as an authenticated user
+- walking through as many links within the app as possible
+- execute an active scan to capture the problems that exist today (note that this may not be strictly necessary, as ZAP's spider will detect links and scan them automatically)
+- generate a report (you can select a template to produce either HTML or JSON output, depending on what you whether you want to review the results by eye or within CI/CD code)
+- create a new automation plan within the ZAP laptop, covering what has been done in this session. Set the automation profile to "Full Scan", or something else as appropriate
+- save the automation plan to a YAML file, and move it into the `./results` directory
+
+Note that the above steps have already been done for the WebGoat app - the YAML file is `./results/zap.webgoat.yaml`. Note that the following parts of this file have been changed:
+- the recorded URLs (http://localhost/... were changed to point to the address of WebGoat when running under Docker (http://172.17.0.1/...)
+- the results directory was changed from what was recorded to `/zap/wrk`
+
+For details that can be adapted to your own application, look at https://www.jit.io/blog/how-to-automate-owasp-zap
+
+Now we've got a ZAP automation YAML created, we can fire up ZAP in a container and pass it the config file
+
+`$ docker run --rm -t -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable bash -c "zap.sh -cmd -addonupdate; zap.sh -cmd -autorun /zap/wrk/zap.webgoat.yaml"`
