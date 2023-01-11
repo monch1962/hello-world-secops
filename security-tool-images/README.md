@@ -81,6 +81,23 @@ To generate a key pair & store it locally under `./cosign-keys`
 
 ---
 
+## Container image vulnerability scan
+
+### Trivy
+
+#### Build Docker image
+
+`$ docker pull aquasec/trivy`
+
+#### Run within CI/CD
+
+Assuming:
+- you want to scan the image `python:3.4-alpine`
+- you want to store the scan results in JSON format in the (pre-existing) directory `./results` as `trivy-report.json`
+
+`$ docker run --rm --name trivy -v $(pwd)/results:/results aquasec/trivy:latest -f json -o /results/trivy-report.json image python:3.4-alpine`
+
+---
 ## Software Bill of Materials (SBOM)
 
 ### sbom-tool
