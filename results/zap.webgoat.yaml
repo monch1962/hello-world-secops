@@ -1,0 +1,96 @@
+---
+env:
+  contexts:
+  - name: "WebGoat"
+    urls:
+    - "http://172.17.0.1:8081/WebGoat"
+    includePaths:
+    - "http://172.17.0.1:8081/WebGoat.*"
+    excludePaths: []
+    authentication:
+      method: "form"
+      parameters:
+        loginPageUrl: "http://172.17.0.1:8081/WebGoat/login"
+        loginRequestUrl: "http://172.17.0.1:8081/WebGoat/login"
+        loginRequestBody: ""
+      verification:
+        method: "response"
+        pollFrequency: 60
+        pollUnits: "requests"
+        pollUrl: ""
+        pollPostData: ""
+    sessionManagement:
+      method: "cookie"
+      parameters: {}
+    technology:
+      exclude: []
+    users:
+    - name: "username"
+      credentials:
+        password: "password"
+        username: "username"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+  vars: {}
+jobs:
+- parameters:
+    scanOnlyInScope: true
+    enableTags: false
+  rules: []
+  name: "passiveScan-config"
+  type: "passiveScan-config"
+- parameters: {}
+  tests:
+  - onFail: "INFO"
+    statistic: "automation.spider.urls.added"
+    site: ""
+    operator: ">="
+    value: 100
+    type: "stats"
+    name: "At least 100 URLs found"
+  name: "spider"
+  type: "spider"
+- parameters:
+    maxDuration: 60
+    maxCrawlDepth: 10
+    numberOfBrowsers: 1
+  tests:
+  - onFail: "INFO"
+    statistic: "spiderAjax.urls.added"
+    site: ""
+    operator: ">="
+    value: 100
+    type: "stats"
+    name: "At least 100 URLs found"
+  name: "spiderAjax"
+  type: "spiderAjax"
+- parameters: {}
+  name: "passiveScan-wait"
+  type: "passiveScan-wait"
+- parameters: {}
+  policyDefinition:
+    rules: []
+  name: "activeScan"
+  type: "activeScan"
+- parameters:
+    template: "traditional-json"
+    reportDir: "/zap/wrk"
+    reportFile: ""
+    reportTitle: "ZAP Scanning Report"
+    reportDescription: ""
+    displayReport: false
+  risks:
+  - "info"
+  - "low"
+  - "medium"
+  - "high"
+  confidences:
+  - "falsepositive"
+  - "low"
+  - "medium"
+  - "high"
+  - "confirmed"
+  name: "report"
+  type: "report"
