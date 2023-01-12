@@ -346,3 +346,41 @@ For details that can be adapted to your own application, look at https://www.jit
 Now we've got a ZAP automation YAML created, we can fire up ZAP in a container and pass it the config file
 
 `$ docker run --rm -t -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable bash -c "zap.sh -cmd -addonupdate; zap.sh -cmd -autorun /zap/wrk/zap.webgoat.yaml"`
+
+### RESTler-Fuzzer
+
+#### Build a Docker image
+
+`$ docker pull mcr.microsoft.com/restlerfuzzer/restler`
+
+#### Run within CI/CD
+
+For this example, we'll assume you're going to test the Swagger pet store app (https://petstore.swagger.io)
+
+The first thing you'll want to do is compile the Swagger for the application you want to test.
+
+`$ wget https://petstore.swagger.io/v2/swagger.json`
+
+`$ docker run --rm -v "$(pwd)":/mnt -it microsoft/restler-fuzzer compile --api_spec swagger.json`
+
+This will create `./Compile` and `./RestlerLogs` directories
+
+Now confirm everything is running OK
+
+`$ docker run --rm -v "$(pwd)":/mnt -it microsoft/restler-fuzzer test --grammar_file ./Compile/grammar.py --dictionary_file ./Compile/dict.json --settings ./Compile/engine_settings.json`
+
+This will create another directory, `./Test`, which will contain any bugs found by the above scan
+
+To run a quick, non-destructive test:
+
+`$ docker run --rm -v "$(pwd)":/mnt -it microsoft/restler-fuzzer fuzz-lean --grammar_file ./Compile/grammar.py --dictionary_file ./Compile/dict.json --settings ./Compile/engine_settings.json`
+
+and this time the results will be captured under yet another new directory, `./FuzzLean`
+
+If you're able to run a long-duration destructive test that may cause outages, you can run:
+
+`$ docker run --rm -v "$(pwd)":/mnt -it microsoft/restler-fuzzer fuzz --grammar_file ./Compile/grammar.py --dictionary_file ./Compile/dict.json --settings ./Compile/engine_settings.json --time_budget 1`
+
+and the results of this test will be captured under yet another new directory, `./Fuzz`
+
+In the above example, the long-duration test will run for a maximum of 1 hour. To change this, change the `--time_budget` value in the above command line
