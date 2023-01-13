@@ -95,7 +95,7 @@ Assuming:
 - you want to scan the image `python:3.4-alpine`
 - you want to store the scan results in JSON format in the (pre-existing) directory `./results` as `trivy-report.json`
 
-`$ docker run --rm --name trivy -v $(pwd)/results:/results aquasec/trivy:latest -f json -o /results/trivy-report.json image python:3.4-alpine`
+`$ docker run --rm --name trivy -v $(pwd)/results:/results  -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest -f json -o /results/trivy-report.json image python:3.4-alpine`
 
 ---
 ## Software Bill of Materials (SBOM)
