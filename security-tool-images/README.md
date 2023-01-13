@@ -361,7 +361,7 @@ The first thing you'll want to do is compile the Swagger for the application you
 
 `$ wget https://petstore.swagger.io/v2/swagger.json`
 
-`$ docker run --rm -v "$(pwd)":/mnt -it microsoft/restler-fuzzer compile --api_spec swagger.json`
+`$ docker run --rm -v "$(pwd)":/mnt -it mcr.microsoft.com/restlerfuzzer/restler compile --api_spec swagger.json`
 
 This will create `./Compile` and `./RestlerLogs` directories
 
@@ -384,3 +384,19 @@ If you're able to run a long-duration destructive test that may cause outages, y
 and the results of this test will be captured under yet another new directory, `./Fuzz`
 
 In the above example, the long-duration test will run for a maximum of 1 hour. To change this, change the `--time_budget` value in the above command line
+
+---
+
+## Kubernetes
+
+### 
+
+Kubescape (https://github.com/kubescape/kubescape) is an open-source Kubernetes security platform for your IDE, CI/CD pipelines, and clusters. It includes risk analysis, security, compliance, and misconfiguration scanning, saving Kubernetes users and administrators precious time, effort, and resources.
+
+#### To build
+
+`$ curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash`
+
+#### Running within CI
+
+`$ kubescape scan --enable-host-scan --format json --format-version v2 --output results/kubescape-results.json`
