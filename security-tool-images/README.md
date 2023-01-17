@@ -378,19 +378,19 @@ Now spin up the Juice Shop app in a named Docker network
 
 Now confirm everything is running OK by running a smoke test against the Juice Shop app
 
-`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll test --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.17.0.2 && cp -rv /Test /mnt/restler/Test'`
+`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll test --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.18.0.2 --target_port 3000 && cp -rv /Test /mnt/restler/Test'`
 
 This will create another directory, `./Test`, which will contain any bugs found by the above scan
 
 To run a quick, non-destructive test:
 
-`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll fuzz-lean --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.17.0.2 && cp -rv /FuzzLean /mnt/restler/FuzzLean'`
+`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll fuzz-lean --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.18.0.2 --target_port 3000 && cp -rv /FuzzLean /mnt/restler/FuzzLean'`
 
 and this time the results will be captured under yet another new directory, `./FuzzLean`
 
 If you're able to run a long-duration destructive test that may cause outages, you can run:
 
-`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll fuzz --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.17.0.2 --time_budget 1 && cp -rv /Fuzz /mnt/restler/Fuzz`
+`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll fuzz --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.18.0.2 --target_port 3000 --time_budget 1 && cp -rv /Fuzz /mnt/restler/Fuzz`
 
 and the results of this test will be captured under yet another new directory, `./Fuzz`
 
