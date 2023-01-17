@@ -378,7 +378,7 @@ Now spin up the Juice Shop app in a named Docker network, saving the container I
 
 `$ APP_CONTAINER_ID=$(docker run --rm -p 3000:3000 -d --net zapnet bkimminich/juice-shop)`
 
-`$ APP_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $APP_CONTAINER_ID)
+`$ APP_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $APP_CONTAINER_ID)`
 
 Now confirm everything is running OK by running a smoke test against the Juice Shop app
 
