@@ -370,27 +370,29 @@ The first thing you'll want to do is compile the Swagger for the application you
 
 This will create `./Compile` and `./RestlerLogs` directories
 
-Now spin up the Juice Shop app in a named Docker network, saving the container ID
+Now spin up the Juice Shop app in a named Docker network, saving the container ID, then use the container ID to get the IP address of the container
 
 `$ docker network create zapnet`
 
-`$ CONTAINER_ID=$(docker run --rm -p 3000:3000 -d --net zapnet bkimminich/juice-shop)`
+`$ APP_CONTAINER_ID=$(docker run --rm -p 3000:3000 -d --net zapnet bkimminich/juice-shop)`
+
+`$ APP_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $APP_CONTAINER_ID)
 
 Now confirm everything is running OK by running a smoke test against the Juice Shop app
 
-`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll test --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.18.0.2 --target_port 3000 --no_ssl && cp -rv /Test /mnt/restler/Test'`
+`$ docker run --rm -e APP_IP=$APP_IP -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll test --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip $APP_IP --target_port 3000 --no_ssl && cp -rv /Test /mnt/restler/Test'`
 
 This will create another directory, `./Test`, which will contain any bugs found by the above scan
 
 To run a quick, non-destructive test:
 
-`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll fuzz-lean --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.18.0.2 --target_port 3000 --no_ssl && cp -rv /FuzzLean /mnt/restler/FuzzLean'`
+`$ docker run --rm -e APP_IP=$APP_IP -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll fuzz-lean --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip $APP_IP --target_port 3000 --no_ssl && cp -rv /FuzzLean /mnt/restler/FuzzLean'`
 
 and this time the results will be captured under yet another new directory, `./FuzzLean`
 
 If you're able to run a long-duration destructive test that may cause outages, you can run:
 
-`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll fuzz --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.18.0.2 --target_port 3000 --no_ssl --time_budget 1 && cp -rv /Fuzz /mnt/restler/Fuzz`
+`$ docker run --rm -e APP_IP=$APP_IP -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll fuzz --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip $APP_IP --target_port 3000 --no_ssl --time_budget 1 && cp -rv /Fuzz /mnt/restler/Fuzz`
 
 and the results of this test will be captured under yet another new directory, `./Fuzz`
 
