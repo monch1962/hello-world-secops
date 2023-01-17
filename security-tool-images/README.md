@@ -355,19 +355,24 @@ Now we've got a ZAP automation YAML created, we can fire up ZAP in a container a
 
 #### Run within CI/CD
 
-For this example, we'll assume you're going to test the Swagger pet store app (https://petstore.swagger.io)
+For this example, we'll assume you're going to test the OWASP Juice Shop app (https://owasp.org/www-project-juice-shop/)
+
+First create a directory to capture all the artifacts from RESTler-fuzzer
+
+`$ mkdir restler`
 
 The first thing you'll want to do is compile the Swagger for the application you want to test.
 
-`$ wget https://petstore.swagger.io/v2/swagger.json`
+`$ wget https://raw.githubusercontent.com/juice-shop/juice-shop/master/swagger.yml`
 
-`$ docker run --rm -v "$(pwd)":/mnt -it mcr.microsoft.com/restlerfuzzer/restler compile --api_spec swagger.json`
+
+`$ docker run --rm -v "$(pwd)":/mnt -it mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll compile --api_spec /mnt/swagger.yml && cp -rv /Compile /mnt/restler/Compile/ && cp -rv /RestlerLogs /mnt/restler/RestlerLogs'`
 
 This will create `./Compile` and `./RestlerLogs` directories
 
-Now confirm everything is running OK
+Now confirm everything is running OK by running a smoke test
 
-`$ docker run --rm -v "$(pwd)":/mnt -it microsoft/restler-fuzzer test --grammar_file ./Compile/grammar.py --dictionary_file ./Compile/dict.json --settings ./Compile/engine_settings.json`
+`$ docker run --rm -v "$(pwd)":/mnt -it mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll test --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json && cp -rv /Test /mnt/restler/Test'`
 
 This will create another directory, `./Test`, which will contain any bugs found by the above scan
 
