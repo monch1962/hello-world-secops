@@ -347,6 +347,8 @@ Now we've got a ZAP automation YAML created, we can fire up ZAP in a container a
 
 `$ docker run --rm -t -v $(pwd)/results:/zap/wrk --net zapnet -t owasp/zap2docker-stable bash -c "zap.sh -cmd -addonupdate; zap.sh -cmd -autorun /zap/wrk/zap.webgoat.yaml"`
 
+---
+
 ### RESTler-Fuzzer
 
 #### Build a Docker image
