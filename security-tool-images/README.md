@@ -370,11 +370,11 @@ The first thing you'll want to do is compile the Swagger for the application you
 
 This will create `./Compile` and `./RestlerLogs` directories
 
-Now spin up the Juice Shop app in a named Docker network
+Now spin up the Juice Shop app in a named Docker network, saving the container ID
 
 `$ docker network create zapnet`
 
-`$ docker run --rm -p 3000:3000 --net zapnet bkimminich/juice-shop`
+`$ CONTAINER_ID=$(docker run --rm -p 3000:3000 -d --net zapnet bkimminich/juice-shop)`
 
 Now confirm everything is running OK by running a smoke test against the Juice Shop app
 
