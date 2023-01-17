@@ -370,9 +370,15 @@ The first thing you'll want to do is compile the Swagger for the application you
 
 This will create `./Compile` and `./RestlerLogs` directories
 
-Now confirm everything is running OK by running a smoke test
+Now spin up the Juice Shop app in a named Docker network
 
-`$ docker run --rm -v "$(pwd)":/mnt -it mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll test --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json && cp -rv /Test /mnt/restler/Test'`
+`$ docker network create zapnet`
+
+`$ docker run --rm -p 3000:3000 --net zapnet bkimminich/juice-shop`
+
+Now confirm everything is running OK by running a smoke test against the Juice Shop app
+
+`$ docker run --rm -v "$(pwd)":/mnt -it --net zapnet mcr.microsoft.com/restlerfuzzer/restler /bin/sh -c 'dotnet exec RESTler/restler/Restler.dll test --grammar_file /mnt/restler/Compile/grammar.py --dictionary_file /mnt/restler/Compile/dict.json --settings /mnt/restler/Compile/engine_settings.json --target_ip 172.17.0.2&& cp -rv /Test /mnt/restler/Test'`
 
 This will create another directory, `./Test`, which will contain any bugs found by the above scan
 
